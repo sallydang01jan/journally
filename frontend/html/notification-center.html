@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <title>Thông báo - Journally</title>
+      <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/notification-center.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  </head>
+  <body>
+
+    <header>
+      <div id="header-container"></div>
+    </header>
+    
+    <main class="notification-center">
+
+      <div id="notification-card"></div>
+
+      <!-- Navigation -->
+      <nav class="menu" aria-label="Main navigation">
+        <button class="home-button" aria-label="Home">
+          <img src="../assets/image/home button.png" alt="">
+        </button>
+        <button class="profile" aria-label="Profile">
+          <img class="ellipse-3" src="../assets/image/profile.png" alt="" />
+        </button>
+        <button class="notification-button" aria-label="Notifications">
+          <img class="star" src="../assets/image/notification.png" alt="" />
+        </button>
+        <button class="create-post" aria-label="Create new post">
+          <img class="plus-2" src="../assets/image/create post.png" alt="" />
+        </button>
+      </nav>
+    </main>
+
+    <script type="module">
+      import { loadAllComponents } from "../javascript/components.js";
+      loadAllComponents();
+    </script>
+
+    <script type="module" src="../javascript/createComponents.js"></script>
+    <script type="module" src="../javascript/notification.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  </body>
+</html>

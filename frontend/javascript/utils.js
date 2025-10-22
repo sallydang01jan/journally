@@ -1,0 +1,194 @@
+// utils.js — nơi chứa helper chung cho toàn frontend
+
+// =============== CẤU HÌNH API ===============
+export const API_BASE_URL = "http://localhost:5000/api";
+
+
+// =============== TOKEN ===============
+export function getToken() {
+  return localStorage.getItem("token");
+}
+
+export function setToken(token) {
+  localStorage.setItem("token", token);
+}
+
+export function removeToken() {
+  localStorage.removeItem("token");
+}
+
+// =============== AUTH ===============
+export function isAuthenticated() {
+  return !!getToken();
+}
+
+// =============== JWT PARSER ===============
+export function parseJwt(token) {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    const payload = JSON.parse(jsonPayload);
+    payload.userId = payload.userId || payload.id; // fallback
+    return payload;
+  } catch (e) {
+    console.error("JWT parse error:", e);
+    return {};
+  }
+}
+
+
+// =============== FETCH WRAPPER ===============
+export async function apiFetch(endpoint, options = {}) {
+  const token = getToken();
+  const headers = {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...options.headers,
+  };
+
+  const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+    ...options,
+    headers,
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "⋆.˚ ☔︎︎ lỗi kết nối API ⋆.˚ ☔︎︎");
+  }
+
+  return res.json();
+}
+
+// =============== HỖ TRỢ GIAO DIỆN ===============
+export function showAlert(message, type = "info") {
+  // có thể thay bằng toast sau này
+  const emoji = type === "success" ? "✨" : type === "error" ? "⚠️" : "💬";
+  alert(`${emoji} ${message}`);
+}
+
+// =============== ĐỊNH DẠNG THỜI GIAN ===============
+export function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
+// =============== KIỂM TRA LOGIN ===============
+export function requireAuth() {
+  if (!isAuthenticated()) {
+    showAlert("𓆝 vui lòng đăng nhập trước khi tiếp tục ⋆｡˚ 𓆟", "error");
+    window.location.href = "../html/login.html";
+  }
+}
+
+export function handleApiError(err) {
+  console.error(err);
+  alert(err.message || "Có lỗi xảy ra, vui lòng thử lại.");
+}
+
+/**
+ * Gửi request với fetch + token
+ */
+export async function fetchData(url, method = "GET", data = null, token = null) {
+  const options = {
+    method,
+    headers: { "Content-Type": "application/json" },
+  };
+
+  if (token) options.headers["Authorization"] = `Bearer ${token}`;
+  if (data) options.body = JSON.stringify(data);
+
+  const response = await fetch(url, options);
+  if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  return await response.json();
+}
+
+/**
+ * Escape ký tự đặc biệt trong HTML
+ */
+export function escapeHTML(str = "") {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+/**
+ * Lấy postId từ URL query
+ */
+export function getPostIdFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("postId");
+}
+
+/**
+ * Tạo phần tử comment từ dữ liệu
+ */
+export function renderComment(comment, container, isNew = false) {
+  const article = document.createElement("article");
+  article.classList.add("comments");
+  if (isNew) article.classList.add("fade-in");
+
+  article.setAttribute("role", "article");
+  article.setAttribute("aria-label", "User comment");
+
+  const avatar = comment.userId?.avatar || "/images/default-avatar.png";
+  const username = comment.userId?.username || "Người dùng ẩn danh";
+  const text = escapeHTML(comment.text || "");
+
+  article.innerHTML = `
+    <header class="comments__header">
+      <img class="comments__avatar" src="${avatar}" alt="${username} avatar" />
+      <h2 class="comments__username">${username}</h2>
+      <nav class="comments__menu" aria-label="Comment actions">
+        <button class="comments__menu-button" aria-label="More options" type="button">
+          <i class="fa fa-ellipsis"></i>
+        </button>
+      </nav>
+    </header>
+    <p class="comments__text">${text}</p>
+  `;
+
+  container.prepend(article);
+}
+// Lấy thông tin người dùng hiện tại từ server hoặc localStorage/
+export async function getUserData() {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Chưa đăng nhập");
+
+    // Gọi API lấy user data (ví dụ /api/users/me)
+    const res = await fetch("/api/users/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!res.ok) throw new Error(`Lỗi ${res.status}: Không thể lấy thông tin người dùng`);
+
+    const user = await res.json();
+
+    // Có thể cache lại để dùng sau
+    localStorage.setItem("userData", JSON.stringify(user));
+    return user;
+  } catch (err) {
+    console.warn("⚠️ Không thể lấy user từ API, thử lấy từ localStorage:", err.message);
+
+    // Nếu server fail, thử lấy bản lưu cục bộ
+    const cached = localStorage.getItem("userData");
+    if (cached) return JSON.parse(cached);
+
+    return null;
+  }
+}

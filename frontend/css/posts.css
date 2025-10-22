@@ -1,0 +1,250 @@
+@font-face {
+  font-family: 'BHN Editorial New Ultra light';
+  src: url('../assets/fonts/BHN Editorial New Ultra Light.ttf');
+}
+
+body {
+  background: repeating-linear-gradient(
+  90deg,
+  #c6eafa,
+  #c6eafa 20px,
+  #ffffff 20px,
+  #ffffff 40px
+  );
+  border: 1px solid #000;
+}
+
+.menu {
+  position: fixed;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #ffe2f3;
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.menu button {
+  width: 60px;
+  height: 60px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.home-button img, .profile img, .notification-button img, .create-post img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.menu button:hover {
+  transform: scale(1.1);
+  transition: 0.2s;
+}
+
+/* Responsive: dưới 768px, chuyển menu sang dưới */
+@media (max-width: 768px) {
+  .menu {
+    flex-direction: row;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: auto;
+    width: 90%;
+    justify-content: space-around;
+    padding: 0.5rem;
+    border-radius: 15px 15px 0 0;
+  }
+
+  .menu button {
+    width: 10vw;
+    height: 10vw;
+  }
+
+  .comments,
+  .group-2 {
+    width: 95%;
+    padding: 1rem;
+  }
+}
+
+/* Comment Input Container */
+.comment-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+/* Vùng khung nhập */
+.comment-input .div-wrapper {
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #010101;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Ô nhập nội dung comment */
+.comment-input .text-wrapper {
+  width: 100%;
+  min-height: 70px;
+  resize: none;
+  overflow: auto;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: "BHN Editorial New Ultra light", Helvetica, sans-serif;
+  font-weight: 300;
+  color: #000000;
+  font-size: 20px;
+  line-height: 1.4;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.comment-input .text-wrapper::placeholder {
+  color: #888;
+  font-size: 20px;
+  font-weight: 300;
+}
+
+/* Nút gửi comment */
+.comment-input .post-comment {
+  align-self: flex-end;
+  background-color: #def4df;
+  border-radius: 10px;
+  border: 1px solid #000000;
+  padding: 8px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.5s ease, color 0.5s ease, transform 0.5s ease;
+  font-family: "BHN Editorial New Ultra light", Helvetica, sans-serif;
+  position: relative;
+  top: 10px;
+}
+
+.comment-input .post-comment:hover {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.comment-input .post-comment:active {
+  transform: scale(0.98);
+}
+
+/* Accessibility focus */
+.comment-input .post-comment:focus-visible {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
+
+/* Ẩn phần tử không cần hiển thị */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Responsive tweaks */
+/* ===== Responsive: Tablet ===== */
+@media (max-width: 1024px) {
+  .menu {
+    width: 50px;
+    padding: 0.5rem;
+  }
+
+  .menu button {
+    width: 50px;
+    height: 50px;
+  }
+
+  .posts-container {
+    padding: 15px;
+  }
+}
+
+/* ===== Responsive: Mobile ===== */
+@media (max-width: 768px) {
+  /* Menu chuyển xuống dưới */
+  .menu {
+    flex-direction: row;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: auto;
+    width: 90%;
+    justify-content: space-around;
+    padding: 0.5rem;
+    border-radius: 15px 15px 0 0;
+  }
+
+  .menu button {
+    width: 10vw;
+    height: 10vw;
+  }
+
+  .posts-container {
+    width: 95%;
+    padding: 10px;
+  }
+
+  .comments,
+  .group-2 {
+    width: 100%;
+    padding: 0.5rem;
+  }
+
+  .comment-input {
+    width: 95%;
+    padding: 5px;
+  }
+
+  .comment-input .text-wrapper {
+    font-size: clamp(14px, 3vw, 18px);
+    min-height: 60px;
+  }
+
+  .comment-input .post-comment {
+    font-size: clamp(14px, 2.5vw, 16px);
+    padding: 6px 16px;
+    align-self: center;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ===== Extra Small: Phones <480px ===== */
+@media (max-width: 480px) {
+  .menu button {
+    width: 12vw;
+    height: 12vw;
+  }
+
+  .comment-input .text-wrapper {
+    font-size: 14px;
+  }
+
+  .comment-input .post-comment {
+    font-size: 14px;
+    padding: 5px 12px;
+  }
+}
