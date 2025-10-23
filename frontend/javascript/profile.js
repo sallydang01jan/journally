@@ -1,5 +1,15 @@
 // ==================== IMPORT ====================
-import { apiFetch, requireAuth, getUserData, getToken, handleApiError, parseJwt, removeToken, API_BASE_URL } from "../utils.js";
+import {
+  apiFetch,
+  requireAuth,
+  getUserData,
+  getToken,
+  handleApiError,
+  parseJwt,
+  removeToken,
+  API_BASE_URL,
+  showAlert,
+} from "../utils.js";
 import { createPostCard } from "../javascript/createComponents.js";
 import { initComments } from "../javascript/comments.js";
 
@@ -44,23 +54,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   const profilePhoto = document.querySelector(".profile-photo");
   const postsSection = document.querySelector(".posts-section");
 
-  if (!userId) {
-    alert("Không tìm thấy người dùng");
-    return;
-  }
+  // ✅ Nếu không có userId -> xem hồ sơ chính mình
+  const endpoint = userId ? `/users/${userId}` : "/users/me";
 
   try {
-    const user = await apiFetch(`${API_BASE_URL}/users/${userId}`, "GET", null, token);
+    const user = await apiFetch(`${API_BASE_URL}${endpoint}`, "GET", null, token);
 
-    // Hiển thị thông tin
+    // ==================== HIỂN THỊ THÔNG TIN ====================
     if (usernameEl) usernameEl.textContent = user.username || "Ẩn danh";
 
     if (profilePhoto) {
       let avatarUrl = "../assets/image/default-avatar.png";
       if (user.avatar) {
-        // Nếu avatar có ký tự đặc biệt hoặc không phải link tuyệt đối
         const safeUrl = encodeURI(user.avatar);
-        avatarUrl = safeUrl.startsWith("http") ? safeUrl : `${API_BASE_URL}/${safeUrl}`;
+        avatarUrl = safeUrl.startsWith("http")
+          ? safeUrl
+          : `${API_BASE_URL}/${safeUrl}`;
       }
 
       profilePhoto.style.backgroundImage = `url(${avatarUrl})`;
@@ -74,20 +83,32 @@ document.addEventListener("DOMContentLoaded", async () => {
       statsEls[2].textContent = `${user.following?.length || 0} đang theo dõi`;
     }
 
-    // Follow logic
-    if (myData.id === user._id.toString()) {
+    // ==================== FOLLOW LOGIC ====================
+    const viewedUserId = user._id || user.id;
+    if (String(myData.id) === String(viewedUserId)) {
       if (followBtnWrapper) followBtnWrapper.style.display = "none";
     } else if (followBtn) {
       const isFollowing =
-        user.followers?.some(f => f._id?.toString?.() === myData.id) ||
+        user.followers?.some((f) => f._id?.toString?.() === myData.id) ||
         user.followers?.includes(myData.id);
 
       followBtn.textContent = isFollowing ? "Đang theo dõi" : "Theo dõi";
 
       followBtnWrapper.onclick = async () => {
         try {
-          const data = await apiFetch(`${API_BASE_URL}/users/${userId}/follow`, "POST", null, token);
-          followBtn.textContent = data.isFollowing ? "Đang theo dõi" : "Theo dõi";
+          const data = await apiFetch(
+            `${API_BASE_URL}/users/${viewedUserId}/follow`,
+            "POST",
+            null,
+            token
+          );
+
+          if (data.message.toLowerCase().includes("bỏ theo dõi")) {
+            followBtn.textContent = "Theo dõi";
+          } else {
+            followBtn.textContent = "Đang theo dõi";
+          }
+
           showAlert(data.message, "info");
         } catch (err) {
           handleApiError(err);
@@ -95,10 +116,29 @@ document.addEventListener("DOMContentLoaded", async () => {
       };
     }
 
-    // Render bài viết
+    // ==================== HIỂN THỊ BÀI VIẾT ====================
     renderPosts(user.posts || [], postsSection);
   } catch (err) {
     handleApiError(err, "Không thể tải trang hồ sơ");
+  }
+
+  // ==================== HEADER PROFILE (GÓC PHẢI) ====================
+  const profileLink = document.getElementById("profile-link");
+  const profileAvatar = document.getElementById("profile-avatar");
+
+  const myDataHeader = myData; // dùng lại, tránh gọi lại getUserData()
+  if (myDataHeader) {
+    let avatarUrl = "../assets/image/default-avatar.png";
+    if (myDataHeader.avatar) {
+      const safeUrl = encodeURI(myDataHeader.avatar);
+      avatarUrl = safeUrl.startsWith("http")
+        ? safeUrl
+        : `${API_BASE_URL}/${safeUrl}`;
+    }
+
+    if (profileAvatar) profileAvatar.src = avatarUrl;
+    if (profileLink)
+      profileLink.href = `../html/profile.html?user=${myDataHeader.id}`;
   }
 });
 
@@ -122,16 +162,16 @@ function renderPosts(posts, section) {
   const container = document.createElement("div");
   container.className = "user-posts";
 
-  posts.forEach(p => {
+  posts.forEach((p) => {
     const card = createPostCard(p);
-      if (!card) return;
+    if (!card) return;
 
-      const commentsContainer = card.querySelector(".comments-container");
-      const commentForm = card.querySelector(".comment-input");
-      const commentTextarea = card.querySelector("textarea");
-      
-      initComments(p._id, commentsContainer, commentForm, commentTextarea);
-      container.appendChild(card);
+    const commentsContainer = card.querySelector(".comments-container");
+    const commentForm = card.querySelector(".comment-input");
+    const commentTextarea = card.querySelector("textarea");
+
+    initComments(p._id, commentsContainer, commentForm, commentTextarea);
+    container.appendChild(card);
   });
 
   section.innerHTML = "";

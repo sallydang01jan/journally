@@ -1,5 +1,5 @@
 // frontend/javascript/upload.js
-import { apiFetch, showAlert, requireAuth, getToken, parseJwt, removeToken } from "./utils.js";
+import { apiFetch, showAlert, requireAuth, getToken, parseJwt, removeToken, API_BASE_URL } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 

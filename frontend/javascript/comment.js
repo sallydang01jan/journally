@@ -1,6 +1,6 @@
 // comments.js
 import { API_BASE_URL, fetchData, getToken, handleApiError, escapeHTML, showAlert, getUserData, formatDate } from "./utils.js";
-import { createCommentCard } from "../components/createComponents.js";
+import { createCommentCard } from "../javascript/createComponents.js";
 
 /**
  * Render một comment vào container

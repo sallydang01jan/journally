@@ -1,11 +1,23 @@
-// main.js
-import { API_BASE_URL, getAuthToken, fetchData, isAuthenticated, getUserData, handleApiError, escapeHTML } from "./utils.js";
+// 📁 frontend/javascript/main.js
+import { loadAllComponents } from "./components.js";
+import {
+  API_BASE_URL,
+  getAuthToken,
+  fetchData,
+  isAuthenticated,
+  getUserData,
+  handleApiError,
+  escapeHTML
+} from "./utils.js";
 import { createPostCard } from "./createComponents.js";
 
-
 document.addEventListener("DOMContentLoaded", async () => {
+  // 🧩 Bước 1: Load toàn bộ component trước
+  await loadAllComponents();
+
+  // 🧩 Bước 2: Tiếp tục logic sau khi component đã sẵn sàng
   const addStoryBtn = document.querySelector(".add-story .frame");
-  const userNameEl = document.querySelector(".header-username"); // chỗ hiển thị tên user
+  const userNameEl = document.querySelector(".header-username");
   const postContainer = document.querySelector("#post-container");
 
   // 🔹 Hiển thị tên người dùng nếu đăng nhập
@@ -14,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const user = getUserData();
     if (userNameEl) userNameEl.textContent = user.username || "User";
   } else {
-    if (addStoryBtn) addStoryBtn.style.display = "none"; // ẩn nút thêm story nếu chưa đăng nhập
+    if (addStoryBtn) addStoryBtn.style.display = "none";
   }
 
   // 🔹 Tạo input ẩn cho upload story
@@ -43,18 +55,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      postContainer.innerHTML = ""; // reset trước khi render
+      postContainer.innerHTML = "";
       posts.forEach(post => {
-        // Escape HTML content trước khi render
         if (post.content) post.content = escapeHTML(post.content);
         postContainer.appendChild(createPostCard(post));
       });
-
     } catch (err) {
       handleApiError(err, "Không thể tải bài viết");
       postContainer.innerHTML = `<p class="text-danger">Lỗi tải bài viết. Vui lòng thử lại sau.</p>`;
     }
   }
 
+  // 🔽 Cuối cùng: gọi hàm loadPosts()
   loadPosts();
 });

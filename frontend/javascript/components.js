@@ -21,3 +21,6 @@ export async function loadAllComponents() {
 
   console.log("✅ Tất cả component HTML đã được load!");
 }
+
+// 🔁 Đảm bảo đồng bộ runtime
+window.addEventListener("DOMContentLoaded", loadAllComponents);

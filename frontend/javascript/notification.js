@@ -1,10 +1,10 @@
 // 📁 frontend/javascript/notification.js
-import { API_BASE_URL, getAuthToken, apiFetch, formatDate } from "./utils.js";
+import { API_BASE_URL, getAuthToken, apiFetch, formatDate, parseJwt, removeToken, } from "./utils.js";
 import { createNotificationCard } from "./createComponents.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-  const token = getToken();
+  const token = getAuthToken();
   if (!token) {
     window.location.href = "../html/auth.html";
   } else {

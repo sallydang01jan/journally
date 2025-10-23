@@ -9,13 +9,52 @@ export function getToken() {
   return localStorage.getItem("token");
 }
 
-export function setToken(token) {
+export function setToken(token, refreshToken = null) {
   localStorage.setItem("token", token);
+  if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
 }
 
 export function removeToken() {
   localStorage.removeItem("token");
+  localStorage.removeItem("refreshToken");
 }
+
+export async function getValidToken() {
+  const token = getToken();
+  if (!token) return null;
+
+  const payload = JSON.parse(atob(token.split(".")[1]));
+  const now = Date.now() / 1000;
+
+  // Nếu JWT còn hạn, dùng luôn
+  if (payload.exp > now) return token;
+
+  // Nếu hết hạn → thử refresh
+  const refreshToken = localStorage.getItem("refreshToken");
+  if (!refreshToken) {
+    removeToken();
+    return null;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Refresh token failed");
+
+    setToken(data.token);
+    return data.token;
+  } catch (err) {
+    console.error("Token refresh failed:", err);
+    removeToken();
+    return null;
+  }
+}
+
 
 // =============== AUTH ===============
 export function isAuthenticated() {
@@ -171,7 +210,7 @@ export async function getUserData() {
     if (!token) throw new Error("Chưa đăng nhập");
 
     // Gọi API lấy user data (ví dụ /api/users/me)
-    const res = await fetch("/api/users/me", {
+    const res = await fetch("${API_BASE_URL}/users/me", {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -192,3 +231,5 @@ export async function getUserData() {
     return null;
   }
 }
+
+export const apiRequest = fetchData;

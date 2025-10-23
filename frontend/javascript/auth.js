@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ===================================================
   // 🔍 BƯỚC 2: KIỂM TRA JWT (AUTH GUARD)
   // ===================================================
-  const token = getToken();
+  const token = await getValidToken();
   const currentPath = window.location.pathname;
 
   if (token) {
@@ -124,6 +124,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         showAlert("Đăng ký thành công! Hãy đăng nhập để tiếp tục.", "success");
       } else {
         setToken(data.token);
+        localStorage.setItem("refreshToken", data.refreshToken);
         showAlert("Đăng nhập thành công!", "success");
 
         const payload = parseJwt(getToken());
@@ -150,7 +151,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       removeToken();
       await clearCaches();
-      redirectTo("../html/login.html");
+      redirectTo("../html/auth.html");
     });
   }
 
