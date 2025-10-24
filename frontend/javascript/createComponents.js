@@ -233,15 +233,16 @@ export function createNotificationCard(notification) {
     </button>
     <div class="avatar">
       <img
-        src="${notification.userId?.avatar || "/assets/image/default-avatar.png"}"
-        alt="${notification.userId?.username || "Ẩn danh"}"
+        src="${notification.user?.avatar || "/assets/image/default-avatar.png"}"
+        alt="${notification.user?.username || "Ẩn danh"}"
         class="notification__avatar-img"
       />
     </div>
     <div class="notification-text">
       <p class="text-wrapper">
-        ${notification.message || `${notification.userId?.username || "Người dùng"} đã theo dõi bạn`}
+        ${notification.message || `${notification.user?.username || "Người dùng"} đã theo dõi bạn`}
       </p>
+      <small class="text-muted">${notification.formattedTime || ""}</small>
     </div>
     <button class="mark-as-read-button" type="button">
       <span class="div">Đánh dấu đã đọc</span>

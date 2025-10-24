@@ -6,132 +6,45 @@ import {
   requireAuth,
   showAlert,
   parseJwt,
-  removeToken
+  removeToken,
 } from "./utils.js";
 import { createPostCard } from "./createComponents.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  requireAuth(); 
+  // 🔐 Kiểm tra token & xác thực
+  requireAuth();
   const token = getToken();
-  if (!token) return;
+  if (!token) return redirectToAuth();
 
-  // Kiểm tra token hết hạn
-  try {
-    const payload = parseJwt(token);
-    const now = Date.now() / 1000;
-    if (payload.exp < now) {
-      removeToken();
-      window.location.href = "../html/auth.html";
-    }
-  } catch {
+  if (isTokenExpired(token)) {
     removeToken();
-    window.location.href = "../html/auth.html";
+    return redirectToAuth();
   }
 
+  // 🎯 DOM elements
   const form = document.getElementById("create-post-form");
   const contentInput = document.getElementById("post-input");
-  const photosBtn = document.querySelector(".photos-icon");
-  const videoBtn = document.querySelector(".video-icon");
-  const musicBtn = document.querySelector(".music-icon");
   const postContainer = document.getElementById("post-container");
-
-  const messageBox = document.createElement("p");
-  const previewBox = document.createElement("div");
-  previewBox.classList.add("drop-zone");
-  previewBox.textContent = "Kéo thả file vào đây hoặc chọn bằng nút trên";
+  const messageBox = createMessageBox();
+  const previewBox = createPreviewBox();
+  const fileInput = createHiddenFileInput(form);
 
   let selectedFiles = [];
 
-  messageBox.id = "post-message";
-  previewBox.id = "post-preview";
   form.append(previewBox, messageBox);
 
-  // 🖼️ Input file ẩn
-  const fileInput = document.createElement("input");
-  fileInput.type = "file";
-  fileInput.hidden = true;
-  fileInput.multiple = true;
-  form.appendChild(fileInput);
+  // 🖼️ Media buttons
+  setupFilePicker(".photos-icon", "image", fileInput);
+  setupFilePicker(".video-icon", "video", fileInput);
+  setupFilePicker(".music-icon", "audio", fileInput);
 
-  // Nút media chọn file
-  const setupFilePicker = (btn, type) => {
-    btn?.addEventListener("click", () => {
-      fileInput.accept = `${type}/*`;
-      fileInput.click();
-    });
-  };
-  setupFilePicker(photosBtn, "image");
-  setupFilePicker(videoBtn, "video");
-  setupFilePicker(musicBtn, "audio");
+  // 🖱️ Drag & drop
+  setupDragAndDrop(previewBox, handleSelectedFiles);
 
-  // 🖱️ Drag & Drop
-  previewBox.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    previewBox.classList.add("dragover");
-  });
-
-  previewBox.addEventListener("dragleave", () => {
-    previewBox.classList.remove("dragover");
-  });
-
-  previewBox.addEventListener("drop", (e) => {
-    e.preventDefault();
-    previewBox.classList.remove("dragover");
-    handleSelectedFiles(Array.from(e.dataTransfer.files));
-  });
-
-  // Max size
-  const MAX_SIZE = 10 * 1024 * 1024; // 10MB
-
-  // 🧩 Xử lý file chọn
-  function handleSelectedFiles(files) {
-    files.forEach(file => {
-      if (!["image", "video", "audio"].some(t => file.type.startsWith(t))) {
-        showAlert(messageBox, "text-danger", `❌ File ${file.name} không hợp lệ.`);
-        return;
-      }
-      if (file.size > MAX_SIZE) {
-        showAlert(messageBox, "text-danger", `❌ File ${file.name} quá lớn (>10MB).`);
-        return;
-      }
-
-      selectedFiles.push(file);
-
-      const url = URL.createObjectURL(file);
-      let previewEl;
-
-      if (file.type.startsWith("image/")) {
-        previewEl = document.createElement("div");
-        previewEl.className = "preview-wrapper";
-        previewEl.innerHTML = `<img src="${url}" class="preview-img" alt="Ảnh tải lên">
-                               <button class="remove-file-btn">❌</button>`;
-      } else if (file.type.startsWith("video/")) {
-        previewEl = document.createElement("div");
-        previewEl.className = "preview-wrapper";
-        previewEl.innerHTML = `<video controls class="preview-video">
-                                <source src="${url}" type="${file.type}">
-                               </video>
-                               <button class="remove-file-btn">❌</button>`;
-      } else if (file.type.startsWith("audio/")) {
-        previewEl = document.createElement("div");
-        previewEl.className = "preview-wrapper";
-        previewEl.innerHTML = `<audio controls>
-                                <source src="${url}" type="${file.type}">
-                               </audio>
-                               <button class="remove-file-btn">❌</button>`;
-      }
-
-      const removeBtn = previewEl.querySelector(".remove-file-btn");
-      removeBtn.addEventListener("click", () => {
-        selectedFiles = selectedFiles.filter(f => f !== file);
-        previewEl.remove();
-      });
-
-      previewBox.appendChild(previewEl);
-    });
-  }
-
-  fileInput.addEventListener("change", (e) => handleSelectedFiles(Array.from(e.target.files)));
+  // 📂 Xử lý file
+  fileInput.addEventListener("change", (e) =>
+    handleSelectedFiles(Array.from(e.target.files))
+  );
 
   // 📝 Gửi bài viết
   form.addEventListener("submit", async (e) => {
@@ -141,53 +54,157 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const content = contentInput.value.trim();
     if (!content && !selectedFiles.length) {
-      showAlert(messageBox, "text-danger", "⚠️ Vui lòng nhập nội dung hoặc chọn file.");
-      return;
+      return showAlert(messageBox, "text-danger", "⚠️ Vui lòng nhập nội dung hoặc chọn file.");
     }
 
     try {
-      const formData = new FormData();
-      if (content) formData.append("content", escapeHTML(content));
-      selectedFiles.forEach(file => formData.append("file", file));
-
       showAlert(messageBox, "text-info", "⏳ Đang đăng bài...");
 
-      const res = await fetch(`${API_BASE_URL}/posts`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        showAlert(messageBox, "text-danger", `⚠️ ${data.message || "Không thể đăng bài"}`);
-        throw new Error(data.message || "Không thể đăng bài");
-      }
+      const post = await createPost(content, selectedFiles, token);
 
       showAlert(messageBox, "text-success", "🎉 Đăng bài thành công!");
-
-      if (data.post && postContainer) {
-        const postCard = createPostCard(data.post);
+      if (post && postContainer) {
+        const postCard = createPostCard(post);
         postContainer.prepend(postCard);
-
-        // Nút xem bài viết
-        const viewBtn = document.createElement("button");
-        viewBtn.textContent = "Xem bài viết";
-        viewBtn.className = "btn btn-primary mt-2";
-        viewBtn.addEventListener("click", () => {
-          window.location.href = `../html/posts.html?id=${data.post._id}`;
-        });
-        messageBox.appendChild(viewBtn);
+        addViewPostButton(messageBox, post._id);
       }
 
-      // Reset form
-      contentInput.value = "";
-      previewBox.innerHTML = "";
+      resetForm(contentInput, previewBox);
       selectedFiles = [];
     } catch (err) {
       console.error("🔥 Lỗi khi đăng bài:", err);
       showAlert(messageBox, "text-danger", `⚠️ ${err.message || "Lỗi kết nối server."}`);
     }
   });
+
+  // 📦 Các hàm phụ
+  function handleSelectedFiles(files) {
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+    files.forEach((file) => {
+      if (!["image", "video", "audio"].some((t) => file.type.startsWith(t))) {
+        return showAlert(messageBox, "text-danger", `❌ File ${file.name} không hợp lệ.`);
+      }
+      if (file.size > MAX_SIZE) {
+        return showAlert(messageBox, "text-danger", `❌ File ${file.name} quá lớn (>10MB).`);
+      }
+
+      selectedFiles.push(file);
+      previewBox.appendChild(createPreviewItem(file, () => {
+        selectedFiles = selectedFiles.filter((f) => f !== file);
+      }));
+    });
+  }
 });
+
+// 🔧 HÀM TIỆN ÍCH ---------------------------------------------------
+function redirectToAuth() {
+  window.location.href = "../html/auth.html";
+}
+
+function isTokenExpired(token) {
+  try {
+    const payload = parseJwt(token);
+    return payload.exp < Date.now() / 1000;
+  } catch {
+    return true;
+  }
+}
+
+function createMessageBox() {
+  const p = document.createElement("p");
+  p.id = "post-message";
+  return p;
+}
+
+function createPreviewBox() {
+  const div = document.createElement("div");
+  div.id = "post-preview";
+  div.classList.add("drop-zone");
+  div.textContent = "Kéo thả file vào đây hoặc chọn bằng nút trên";
+  return div;
+}
+
+function createHiddenFileInput(form) {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.hidden = true;
+  input.multiple = true;
+  form.appendChild(input);
+  return input;
+}
+
+function setupFilePicker(selector, type, input) {
+  const btn = document.querySelector(selector);
+  btn?.addEventListener("click", () => {
+    input.accept = `${type}/*`;
+    input.click();
+  });
+}
+
+function setupDragAndDrop(dropZone, onDropFiles) {
+  dropZone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZone.classList.add("dragover");
+  });
+
+  dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+  dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropZone.classList.remove("dragover");
+    onDropFiles(Array.from(e.dataTransfer.files));
+  });
+}
+
+function createPreviewItem(file, onRemove) {
+  const url = URL.createObjectURL(file);
+  const wrapper = document.createElement("div");
+  wrapper.className = "preview-wrapper";
+
+  let mediaHTML = "";
+  if (file.type.startsWith("image/")) {
+    mediaHTML = `<img src="${url}" class="preview-img" alt="Ảnh tải lên">`;
+  } else if (file.type.startsWith("video/")) {
+    mediaHTML = `<video controls class="preview-video"><source src="${url}" type="${file.type}"></video>`;
+  } else if (file.type.startsWith("audio/")) {
+    mediaHTML = `<audio controls><source src="${url}" type="${file.type}"></audio>`;
+  }
+
+  wrapper.innerHTML = `${mediaHTML}<button class="remove-file-btn">❌</button>`;
+  wrapper.querySelector(".remove-file-btn").addEventListener("click", () => {
+    onRemove();
+    wrapper.remove();
+  });
+
+  return wrapper;
+}
+
+async function createPost(content, files, token) {
+  const formData = new FormData();
+  if (content) formData.append("content", escapeHTML(content));
+  files.forEach((file) => formData.append("file", file));
+
+  const res = await fetch(`${API_BASE_URL}/posts`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Không thể đăng bài");
+  return data.post;
+}
+
+function addViewPostButton(container, postId) {
+  const btn = document.createElement("button");
+  btn.textContent = "Xem bài viết";
+  btn.className = "btn btn-primary mt-2";
+  btn.addEventListener("click", () => {
+    window.location.href = `../html/posts.html?id=${postId}`;
+  });
+  container.appendChild(btn);
+}
+
+function resetForm(input, previewBox) {
+  input.value = "";
+  previewBox.innerHTML = "";
+}

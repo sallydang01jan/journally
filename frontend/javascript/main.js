@@ -7,20 +7,18 @@ import {
   isAuthenticated,
   getUserData,
   handleApiError,
-  escapeHTML
+  escapeHTML,
+  showAlert
 } from "./utils.js";
 import { createPostCard } from "./createComponents.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // 🧩 Bước 1: Load toàn bộ component trước
   await loadAllComponents();
 
-  // 🧩 Bước 2: Tiếp tục logic sau khi component đã sẵn sàng
   const addStoryBtn = document.querySelector(".add-story .frame");
   const userNameEl = document.querySelector(".header-username");
   const postContainer = document.querySelector("#post-container");
 
-  // 🔹 Hiển thị tên người dùng nếu đăng nhập
   const token = getAuthToken();
   if (isAuthenticated() && token) {
     const user = getUserData();
@@ -29,14 +27,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (addStoryBtn) addStoryBtn.style.display = "none";
   }
 
-  // 🔹 Tạo input ẩn cho upload story
+  // Input ẩn upload story
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.accept = "image/*,video/*";
   fileInput.classList.add("d-none");
   document.body.appendChild(fileInput);
 
+  // =======================
   // 🔄 Load posts
+  // =======================
   async function loadPosts() {
     if (!postContainer) return console.error("❌ Không tìm thấy container #post-container");
 
@@ -66,6 +66,51 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // 🔽 Cuối cùng: gọi hàm loadPosts()
+  // =======================
+  // ➕ Thêm story
+  // =======================
+  if (addStoryBtn) {
+    addStoryBtn.addEventListener("click", () => fileInput.click());
+
+    fileInput.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        // 1️⃣ Upload file
+        const uploadRes = await fetch(`${API_BASE_URL}/upload`, {
+          method: "POST",
+          body: formData,
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const uploadData = await uploadRes.json();
+        if (!uploadRes.ok) throw new Error(uploadData.message || "Upload thất bại");
+
+        const mediaUrl = uploadData.url;
+        const type = file.type.startsWith("video/") ? "video" : "image";
+
+        // 2️⃣ Tạo story
+        const storyRes = await fetch(`${API_BASE_URL}/stories`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ mediaUrl, type, caption: "" })
+        });
+        const storyData = await storyRes.json();
+        if (!storyRes.ok) throw new Error(storyData.message || "Tạo story thất bại");
+
+        showAlert("✅ Story đã được đăng!", "success");
+      } catch (err) {
+        console.error(err);
+        showAlert("❌ Upload story thất bại", "error");
+      }
+    });
+  }
+
   loadPosts();
 });

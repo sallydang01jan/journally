@@ -55,7 +55,6 @@ export async function getValidToken() {
   }
 }
 
-
 // =============== AUTH ===============
 export function isAuthenticated() {
   return !!getToken();
