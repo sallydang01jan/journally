@@ -1,27 +1,19 @@
 // 📁 frontend/javascript/notification.js
-import { API_BASE_URL, getAuthToken, apiFetch, formatDate, parseJwt, removeToken, } from "./utils.js";
+import { API_BASE_URL, getToken, apiFetch, formatDate, parseJwt, removeToken, requireAuth } from "./utils.js";
 import { createNotificationCard } from "./createComponents.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // ✅ Bắt buộc login
+  requireAuth(); // nếu chưa login sẽ redirect sang auth.html
 
-  const token = getAuthToken();
-  if (!token) {
-    window.location.href = "../html/auth.html";
-  } else {
-    try {
-      const payload = parseJwt(token);
-      const now = Date.now() / 1000; // seconds
-      if (payload.exp < now) {
-        removeToken();
-        window.location.href = "../html/auth.html";
-      }
-    } catch (err) {
-      removeToken();
-      window.location.href = "../html/auth.html";
-    }
-  }
-
+  const token = getToken();
   const notificationCard = document.getElementById("notification-card");
+
+  // Ẩn nút notification nếu chưa login
+  const notifBtn = document.querySelector(".notification-button");
+  if (!token && notifBtn) {
+    notifBtn.style.display = "none";
+  }
 
   // 🟢 Lấy danh sách thông báo
   async function fetchNotifications() {
@@ -44,7 +36,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     list.forEach((n) => {
-      // Dùng user từ backend để hiển thị đúng username/avatar
       const card = createNotificationCard({
         ...n,
         formattedTime: formatDate(n.createdAt),
@@ -69,7 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       await apiFetch(`${API_BASE_URL}/notifications/${id}/read`, {
         method: "PUT",
-        headers: { Authorization: `Bearer ${getAuthToken()}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       card.classList.add("read");
       const markBtn = card.querySelector(".mark-as-read-button");
@@ -86,7 +77,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       await apiFetch(`${API_BASE_URL}/notifications/${id}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${getAuthToken()}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       card.remove();
     } catch (err) {

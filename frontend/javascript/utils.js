@@ -84,13 +84,18 @@ export function parseJwt(token) {
 // =============== FETCH WRAPPER ===============
 export async function apiFetch(endpoint, options = {}) {
   const token = getToken();
+
   const headers = {
     "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
 
-  const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const url = endpoint.startsWith("http")
+    ? endpoint
+    : `${API_BASE_URL}${endpoint}`;
+
+  const res = await fetch(url, {
     ...options,
     headers,
   });
@@ -102,6 +107,7 @@ export async function apiFetch(endpoint, options = {}) {
 
   return res.json();
 }
+
 
 // =============== HỖ TRỢ GIAO DIỆN ===============
 export function showAlert(message, type = "info") {
@@ -208,25 +214,19 @@ export async function getUserData() {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("Chưa đăng nhập");
 
-    // Gọi API lấy user data (ví dụ /api/users/me)
-    const res = await fetch("${API_BASE_URL}/users/me", {
+    const res = await fetch(`${API_BASE_URL}/users/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
     if (!res.ok) throw new Error(`Lỗi ${res.status}: Không thể lấy thông tin người dùng`);
 
     const user = await res.json();
-
-    // Có thể cache lại để dùng sau
     localStorage.setItem("userData", JSON.stringify(user));
     return user;
   } catch (err) {
     console.warn("⚠️ Không thể lấy user từ API, thử lấy từ localStorage:", err.message);
-
-    // Nếu server fail, thử lấy bản lưu cục bộ
     const cached = localStorage.getItem("userData");
     if (cached) return JSON.parse(cached);
-
     return null;
   }
 }
