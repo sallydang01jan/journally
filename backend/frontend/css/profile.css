@@ -1,0 +1,256 @@
+@font-face {
+  font-family: 'BHN Editorial New Ultra light';
+  src: url('../assets/fonts/BHN Editorial New Ultra Light.ttf');
+}
+
+body {
+  background: repeating-linear-gradient(
+  90deg,
+  #c6eafa,
+  #c6eafa 20px,
+  #ffffff 20px,
+  #ffffff 40px
+  );
+  border: 1px solid #000;
+}
+
+/* Tổng thể */
+.poeple-s-profile {
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  font-family: "BHN Editorial New Ultra light", Helvetica, sans-serif;
+}
+
+/* Background */
+.poeple-s-profile .component {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  display: flex;
+  z-index: -1;
+}
+
+/* Menu bên trái */
+.menu {
+  position: fixed;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #ffe2f3;
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.menu button {
+  width: 60px;
+  height: 60px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.home-button img, .profile img, .notification-button img, .create-post img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.menu button:hover {
+  transform: scale(1.1);
+  transition: 0.2s;
+}
+
+.poeple-s-profile .menu button:hover {
+  transform: scale(1.1);
+  transition: 0.2s;
+}
+
+/* Khu vực hồ sơ */
+.poeple-s-profile .profile-section {
+  position: relative;
+  margin-left: 10vw;
+  margin-top: 15vh;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2vw;
+  width: 80%;
+  max-width: 1200px;
+}
+
+.poeple-s-profile .profile-photo {
+  width: clamp(150px, 20vw, 300px);
+  height: clamp(150px, 20vw, 300px);
+  background-image: url(./img/ellipse-1.png);
+  background-size: cover;
+  background-position: center;
+  border: 1px solid #000;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Thông tin người dùng */
+.poeple-s-profile .profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+  flex-grow: 1;
+}
+
+.poeple-s-profile .text-wrapper-2 {
+  font-size: clamp(24px, 3vw, 60px);
+  font-weight: 300;
+  color: #000;
+}
+
+.poeple-s-profile .profile-stats {
+  display: flex;
+  gap: 3vw;
+  flex-wrap: wrap;
+}
+
+.poeple-s-profile .text-wrapper-3,
+.poeple-s-profile .text-wrapper-4,
+.poeple-s-profile .text-wrapper-5 {
+  font-size: clamp(20px, 2.5vw, 50px);
+  color: #000;
+}
+
+/* Nút Follow */
+.poeple-s-profile .follow-button {
+  background-color: #ddf3df;
+  border-radius: 10px;
+  border: 1px solid #000;
+  width: clamp(150px, 40%, 450px);
+  height: clamp(50px, 10vh, 98px);
+  cursor: pointer;
+  text-align: center;
+  position: relative;
+  transition: 0.2s;
+  font-family: "BHN Editorial New Ultra light";
+}
+
+.poeple-s-profile .follow-button:hover {
+  background-color: #c8eaca;
+}
+
+.poeple-s-profile .follow-button:active {
+  background-color: #b3e0b6;
+}
+
+.poeple-s-profile .text-wrapper-6 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(20px, 2vw, 40px);
+  color: #000;
+}
+
+/* Khu vực bài viết */
+.poeple-s-profile .posts-section {
+  width: 80%;
+  max-width: 1200px;
+  margin-left: 10vw;
+  margin-top: 5vh;
+  border: 1px solid #000;
+  border-radius: 10px;
+  background-color: #fff;
+  padding: 3vh 2vw;
+  box-sizing: border-box;
+}
+
+.poeple-s-profile .rectangle-2 {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  border: 1px solid #000;
+  background-color: #fff;
+}
+
+.poeple-s-profile .text-wrapper {
+  display: block;
+  text-align: center;
+  margin-top: 5vh;
+  font-size: clamp(24px, 3vw, 60px);
+  color: #000;
+  font-weight: 300;
+}
+
+/* Responsive menu dưới mobile */
+/* Tablet: 768px – 1024px */
+@media (max-width: 1024px) {
+  .poeple-s-profile .profile-section {
+    margin-left: 5vw;
+    width: 90%;
+    gap: 4vw;
+  }
+
+  .poeple-s-profile .posts-section {
+    margin-left: 5vw;
+    width: 90%;
+  }
+}
+
+/* Mobile: <768px */
+@media (max-width: 768px) {
+  /* Menu dưới màn hình */
+  .menu {
+    flex-direction: row;
+    bottom: 0;
+    top: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 15px 15px 0 0;
+    width: 90%;
+    justify-content: space-around;
+    padding: 0.5rem;
+  }
+
+  .poeple-s-profile .menu button {
+    width: 8vh;
+    height: 8vh;
+  }
+
+  .poeple-s-profile .profile-section {
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    gap: 5vw;
+  }
+
+  .poeple-s-profile .posts-section {
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+    padding: 2vh 2vw;
+  }
+
+  .poeple-s-profile .text-wrapper-2 {
+    font-size: clamp(20px, 4vw, 40px);
+  }
+
+  .poeple-s-profile .text-wrapper-3,
+  .poeple-s-profile .text-wrapper-4,
+  .poeple-s-profile .text-wrapper-5 {
+    font-size: clamp(18px, 3.5vw, 36px);
+  }
+
+  .poeple-s-profile .follow-button {
+    width: 70%;
+    height: clamp(45px, 8vh, 70px);
+  }
+
+  .poeple-s-profile .text-wrapper-6 {
+    font-size: clamp(18px, 3vw, 32px);
+  }
+}

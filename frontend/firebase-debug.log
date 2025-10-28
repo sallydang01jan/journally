@@ -1,0 +1,57 @@
+[debug] [2025-10-20T09:05:50.114Z] ----------------------------------------------------------------------
+[debug] [2025-10-20T09:05:50.117Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Admin\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2025-10-20T09:05:50.117Z] CLI Version:   14.20.0
+[debug] [2025-10-20T09:05:50.117Z] Platform:      win32
+[debug] [2025-10-20T09:05:50.117Z] Node Version:  v24.7.0
+[debug] [2025-10-20T09:05:50.117Z] Time:          Mon Oct 20 2025 16:05:50 GMT+0700 (Giờ Đông Dương)
+[debug] [2025-10-20T09:05:50.118Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-20T09:05:50.119Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\Admin
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[debug] [2025-10-20T09:05:51.017Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2025-10-20T09:05:51.017Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] 
+[debug] [2025-10-20T09:06:13.126Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-20T09:06:13.126Z] > authorizing via signed-in user (sally01january@gmail.com)
+[debug] [2025-10-20T09:06:13.127Z] Checked if tokens are valid: false, expires at: 1757002199238
+[debug] [2025-10-20T09:06:13.127Z] Checked if tokens are valid: false, expires at: 1757002199238
+[debug] [2025-10-20T09:06:13.127Z] > refreshing access token with scopes: []
+[debug] [2025-10-20T09:06:13.128Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-20T09:06:13.128Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-20T09:06:13.325Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-20T09:06:13.325Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-20T09:06:13.338Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/profile-creator-xoxo [none]
+[debug] [2025-10-20T09:06:13.751Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/profile-creator-xoxo 200
+[debug] [2025-10-20T09:06:13.751Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/profile-creator-xoxo {"projectId":"profile-creator-xoxo","projectNumber":"688415273939","displayName":"profile-creator-xoxo","name":"projects/profile-creator-xoxo","resources":{"hostingSite":"profile-creator-xoxo","realtimeDatabaseInstance":"profile-creator-xoxo-default-rtdb"},"state":"DELETED","etag":"1_85821863-d689-4500-8d6a-e1e9861ac079"}
+[info] i  Using project profile-creator-xoxo (profile-creator-xoxo) . 
+[info] 
+=== Hosting Setup
+[debug] [2025-10-20T09:06:13.918Z] Checked if tokens are valid: true, expires at: 1760954772326
+[debug] [2025-10-20T09:06:13.919Z] Checked if tokens are valid: true, expires at: 1760954772326
+[debug] [2025-10-20T09:06:13.919Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/profile-creator-xoxo [none]
+[debug] [2025-10-20T09:06:14.233Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/profile-creator-xoxo 200
+[debug] [2025-10-20T09:06:14.234Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/profile-creator-xoxo {"projectId":"profile-creator-xoxo","projectNumber":"688415273939","displayName":"profile-creator-xoxo","name":"projects/profile-creator-xoxo","resources":{"hostingSite":"profile-creator-xoxo","realtimeDatabaseInstance":"profile-creator-xoxo-default-rtdb"},"state":"DELETED","etag":"1_85821863-d689-4500-8d6a-e1e9861ac079"}
+[info] 
+[info] Your public directory is the folder (relative to your project directory) that
+[info] will contain Hosting assets to be uploaded with firebase deploy. If you
+[info] have a build process for your assets, use your build's output directory.
+[info] 

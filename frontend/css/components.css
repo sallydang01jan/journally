@@ -1,0 +1,627 @@
+@font-face {
+  font-family: 'BHN Editorial New Ultra light'; /* Name your font family */
+  src: url('../assets/fonts/BHN\ Editorial\ New\ Ultra\ Light.ttf'); /* Locate the .ttf file within your directory*/
+}
+
+/* Header container */
+.box {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  background: #ffffff;
+  border: 1px solid #000000;
+}
+
+/* Header khi chưa đăng nhập */
+.header-not-logged-in {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+  background-color: #FFF8D0;
+}
+
+.property-header .logo-ng {
+  height: 100px;
+  width: 100px;
+  object-fit: contain;
+}
+
+/* Nút đăng nhập/đăng ký */
+.property-sign-in {
+  background-color: #c6eafa;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  padding: 15px 30px;
+  text-decoration: none;
+  color: #000000;
+  font-family: "BHN Editorial New Ultra light", Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.property-sign-in:hover {
+  background-color: #b0dff0;
+  transform: translateY(-2px);
+}
+
+.property-sign-in:active {
+  transform: translateY(0);
+}
+
+/* Header khi đã đăng nhập */
+.header-logged-in {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #FFF8D0;
+  border: 1px solid #000000;
+  padding: 10px 30px;
+}
+
+.header-logged-in .logo {
+  height: 60px;
+  width: 200px;
+  background-image: url("../assets/image/logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+
+.user-icon {
+  background-image: url("../assets/image/user.png");
+  background-size: cover;
+  width: 60px;
+  height: 60px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.user-icon:hover {
+  transform: scale(1.05);
+}
+/* Dropdown tài khoản */
+.account-options {
+  position: absolute;
+  top: 100px;
+  right: 40px;
+  background: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  padding: 10px;
+  width: 200px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logout-button {
+  width: 100%;
+  background: #c6eafa;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  font-size: 18px;
+  padding: 10px 0;
+  cursor: pointer;
+  font-family: "BHN Editorial New-UltraLight", Helvetica, Arial, sans-serif;
+}
+
+.logout-button:hover {
+  background: #b0dff0;
+}
+
+/* 👇 Thêm đoạn này ở đây */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffff;
+  position: relative;
+  bottom: 35px;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #333;
+  position: relative;
+  bottom: 30px;
+}
+
+/* Accessibility helpers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header-not-logged-in,
+  .header-logged-in {
+    flex-direction: column;
+    text-align: center;
+    padding: 10px 15px;
+  }
+
+  .logo-ng,
+  .logo {
+    height: clamp(40px, 8vw, 60px);
+  }
+
+  .property-sign-in {
+    font-size: 18px;
+    padding: 10px 20px;
+    margin-top: 10px;
+  }
+
+  .user-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+
+/* footer */
+.footer {
+  width: 100%;
+  background-color: #fff8d0;
+  border: 1px solid #000000;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+}
+
+.footer-column {
+  flex: 1 1 30%;
+  margin: 20px;
+  text-align: start;
+}
+
+.footer h3 {
+  font-family: "BHN Editorial New Ultra light";
+  font-weight: 300;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.footer p, .footer a {
+  font-family: "BHN Editorial New Ultra light";
+  font-weight: 300;
+  font-size: 18px;
+  margin: 5px 0;
+  color: #000000;
+  text-decoration: none;
+}
+
+.footer-bottom {
+  width: 100%;
+  text-align: center;
+  margin-top: 40px;
+  font-size: 16px;
+  padding-top: 20px;
+  font-family: "BHN Editorial New Ultra light";
+}
+@media (max-width: 768px) {
+  .footer-column {
+    flex: 1 1 100%;
+    margin: 10px 0;
+    text-align: center;
+  }
+
+  .footer h3 {
+    font-size: 20px;
+  }
+
+  .footer p, .footer a {
+    font-size: 16px;
+  }
+}
+
+/* comment */
+.comments {
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #000;
+  padding: 16px 20px;
+  box-sizing: border-box;
+  margin: 20px auto;
+}
+
+/* Header */
+.comments__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.comments__avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid #000;
+  object-fit: cover;
+}
+
+.comments__username {
+  flex-grow: 1;
+  margin-left: 15px;
+  font-family: "BHN Editorial New Ultra light";
+  font-weight: 300;
+  color: #000;
+  font-size: 22px;
+  letter-spacing: 0;
+}
+
+/* Menu */
+.comments__menu {
+  position: relative;
+}
+
+.comments__menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 38px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.comments__menu-button:hover .comments__menu-dot {
+  background-color: #333;
+}
+
+.comments__menu-button:focus {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
+
+.comments__menu-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 1px solid #000;
+  transition: background-color 0.2s ease;
+}
+
+/* Text */
+.comments__text {
+  font-family: "BHN Editorial New Ultra light";
+  font-weight: 300;
+  color: #000;
+  font-size: 18px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* posts */
+.posts {
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  height: 523px;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 30px auto;
+  box-sizing: border-box;
+}
+
+/* ===== Header ===== */
+.posts-header {
+  position: relative;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  box-sizing: border-box;
+}
+
+.profile-photo {
+  width: 50px;
+  height: 50px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  border: 1px solid #000000;
+  object-fit: cover;
+}
+
+.username {
+  position: absolute;
+  left: 85px;
+  top: 24px;
+  font-family: "BHN Editorial New Ultra light";
+  font-weight: 300;
+  font-size: 30px;
+  color: #000000;
+  margin: 0;
+}
+
+/* ===== Content ===== */
+.posts-content {
+  position: relative;
+  height: 367px;
+  background-color: #ffffff;
+}
+
+/* ===== Footer ===== */
+.posts-footer {
+  position: absolute;
+  bottom: 15px;
+  left: 29px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.like-button,
+.comments-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 51px;
+  height: 48px;
+  position: relative;
+}
+
+.like-button:hover,
+.comments-button:hover {
+  opacity: 0.7;
+}
+
+.vector {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  top: 900%;
+  left: 0;
+}
+
+/* post options */
+.options {
+  position: absolute;
+  right: 20px;
+  top: 24px;
+}
+
+.options-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.options-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.fa-ellipsis {
+  font-size: 18px;
+  color: #333;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 8px;
+  list-style: none;
+  padding: 4px 0;
+  width: 150px;
+  z-index: 10;
+}
+
+.dropdown-menu.show {
+  display: block;
+  animation: fadeIn 0.2s ease;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-size: 15px;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f8f8;
+}
+
+.dropdown-item img {
+  width: 18px;
+  height: 18px;
+}
+
+.dropdown-item.delete {
+  color: #e74c3c;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 768px) {
+  .posts {
+    max-width: 100%;
+    height: auto;
+    padding: 15px;
+  }
+
+  .posts-header,
+  .posts-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .username {
+    position: static;
+    font-size: 20px;
+    margin-left: 0;
+  }
+
+  .comments {
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  .comments__username {
+    font-size: 18px;
+  }
+
+  .comments__text {
+    font-size: 16px;
+  }
+}
+
+/*notification-card*/
+.notification {
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #000000;
+  padding: 20px 25px;
+  box-sizing: border-box;
+  margin: 20px auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+/* ===== Avatar ===== */
+.notification .avatar {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 1px solid #000000;
+  object-fit: cover;
+  background-color: #fff;
+}
+
+/* ===== Text Section ===== */
+.notification .notification-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.notification .text-wrapper {
+  font-family: "BHN Editorial New Ultra light";
+  font-weight: 300;
+  font-size: 22px;
+  color: #000000;
+  line-height: 1.4;
+  margin-bottom: 10px;
+  word-break: break-word;
+}
+
+/* ===== Action Buttons ===== */
+.notification .actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.notification .mark-as-read-button {
+  background-color: #ddf3df;
+  border-radius: 10px;
+  border: 1px solid #000000;
+  padding: 8px 18px;
+  font-family: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-family: "BHN Editorial New Ultra light";
+}
+
+.notification .mark-as-read-button:hover {
+  background-color: #c8eaca;
+}
+
+.notification .mark-as-read-button:active {
+  background-color: #b3e0b6;
+}
+
+/* ===== Close Button ===== */
+.notification .close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+  transition: opacity 0.2s ease;
+}
+
+.notification .close-button:hover {
+  opacity: 0.6;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .notification {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .notification .avatar {
+    width: 50px;
+    height: 50px;
+  }
+
+  .notification .text-wrapper {
+    font-size: clamp(14px, 4vw, 18px);
+  }
+
+  .notification .mark-as-read-button {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+}
+

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Về tụi mình - Journally</title>
+  <link rel="stylesheet" href="../css/components.css" />
+
+  <style>
+    /* ==================== FONT ==================== */
+    @font-face {
+      font-family: 'BHN Editorial New Ultra Light';
+      src: url('../assets/fonts/BHN-Editorial-New-Ultra-Light.ttf') format('truetype');
+    }
+
+    /* ==================== BODY ==================== */
+    body {
+      font-family: 'BHN Editorial New Ultra light', sans-serif;
+      background: repeating-linear-gradient(
+        90deg,
+        #c6eafa,
+        #c6eafa 20px,
+        #ffffff 20px,
+        #ffffff 40px
+      );
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ==================== CONTAINER ==================== */
+    .container {
+      max-width: 90%;
+      width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #000;
+      border-radius: 10px;
+      background-color: #c6eafa;
+    }
+
+    /* ==================== TITLE ==================== */
+    .title {
+      text-align: center;
+      color: #000;
+      font-size: clamp(32px, 6vw, 50px);
+      margin-bottom: 20px;
+    }
+
+    /* ==================== CONTENT ==================== */
+    .content {
+      font-size: clamp(16px, 3vw, 25px);
+      line-height: 1.6;
+    }
+
+    /* ==================== MEDIA QUERIES ==================== */
+    @media (max-width: 768px) {
+      .container { padding: 15px; }
+      .title { font-size: clamp(28px, 8vw, 40px); }
+      .content { font-size: clamp(14px, 4vw, 20px); }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 10px; }
+      .title { font-size: clamp(24px, 10vw, 36px); }
+      .content { font-size: clamp(12px, 5vw, 18px); }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div id="header-container"></div>
+  </header>
+
+  <main class="container">
+    <h1 class="title">Về tụi mình</h1>
+    <p class="content"><strong>Chào bạn, tụi mình là Journally nè!</strong><br><br>
+      Bạn còn nhớ cảm giác mở một cuốn sổ tay mới, hít hà mùi giấy thơm nhẹ, rồi cẩn thận dán từng tấm ảnh polaroid hay viết vài dòng tâm sự bằng nét chữ cong cong dễ thương không?<br><br>
+      Journally ra đời để giữ lại cảm giác đó — nhưng theo cách kỹ thuật số!<br><br>
+      Tụi mình là một mạng xã hội nhỏ xinh, được thiết kế như một cuốn nhật ký số, nơi bạn có thể viết ra những gì đang cảm thấy, chia sẻ ảnh, nhạc, cảm xúc — và gặp gỡ những người cũng yêu thích sự nhẹ nhàng, riêng tư, và đáng yêu như bạn.
+    </p>
+
+    <p class="content"><strong>Journally là gì vậy?</strong><br><br>
+      Nói một cách dễ thương: Journally giống như một chiếc sổ tay biết kết nối.<br>
+      Ở đây, bạn có thể:
+    </p>
+
+    <ul class="content">
+      <li>Viết nhật ký online (giống như viết thư gửi cho chính mình hoặc ai đó hiểu mình)</li>
+      <li>Chèn ảnh polaroid, chọn khung viền xinh xắn, dán sticker tùy ý</li>
+      <li>Đính kèm bài nhạc đang nghe — để ai đó nghe cùng và hiểu mình hơn</li>
+      <li>Gửi “bức thư nhỏ” dưới dạng bài viết có hiệu ứng mở phong bì cực chill</li>
+      <li>Theo dõi những người bạn thích, xem trang cá nhân của họ như lật một cuốn scrapbook riêng</li>
+    </ul>
+
+    <p class="content">
+      Mỗi trang, mỗi góc trên Journally đều được thiết kế để khiến bạn cảm thấy được lắng nghe, được là chính mình, và được sống chậm lại một chút.
+    </p>
+  </main>
+
+  <footer>
+    <div id="footer-container"></div>
+  </footer>
+
+  <!-- ✅ Chỉ import components.js, không cần gọi thủ công -->
+  <script type="module" src="../javascript/components.js"></script>
+
+  <!-- Chatbase -->
+  <script>
+    (function(){
+      if(!window.chatbase || window.chatbase("getState")!=="initialized"){
+        window.chatbase=(...args)=>{
+          if(!window.chatbase.q){window.chatbase.q=[]}
+          window.chatbase.q.push(args)
+        };
+        window.chatbase=new Proxy(window.chatbase,{
+          get(target,prop){
+            if(prop==="q"){return target.q}
+            return(...args)=>target(prop,...args)
+          }
+        })
+      }
+      const onLoad=function(){
+        const script=document.createElement("script");
+        script.src="https://www.chatbase.co/embed.min.js";
+        script.id="huIxgDhBOP2APxWQ5ynYV";
+        script.domain="www.chatbase.co";
+        document.body.appendChild(script)
+      };
+      if(document.readyState==="complete"){onLoad()}
+      else{window.addEventListener("load",onLoad)}
+    })();
+  </script>
+</body>
+</html>
