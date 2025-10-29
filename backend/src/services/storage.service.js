@@ -3,6 +3,6 @@
 // services/storage.service.js
 exports.uploadFile = async (file) => {
   // Tạo URL tĩnh cho file
-  const url = `https://journally-backend.onrender.com/uploads/${file.filename}`;
+  const url = `https://journally-phi.vercel.app/uploads/${file.filename}`;
   return url;
 };
