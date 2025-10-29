@@ -1,7 +1,7 @@
 // utils.js — nơi chứa helper chung cho toàn frontend
 
 // =============== CẤU HÌNH API ===============
-export const API_BASE_URL = "https://journally-phi.vercel.app";
+export const API_BASE_URL = "https://journally-backend.onrender.com";
 
 
 // =============== TOKEN ===============
