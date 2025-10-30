@@ -1,4 +1,4 @@
-// ==================== IMPORT ====================
+// frontend/javascript/profile.js
 import {
   apiFetch,
   requireAuth,
@@ -9,17 +9,15 @@ import {
   removeToken,
   API_BASE_URL,
   showAlert,
-} from "../utils.js";
-import { createPostCard } from "../javascript/createComponents.js";
-import { initComments } from "../javascript/comments.js";
+} from "./utils.js";
+import { createPostCard } from "./createComponents.js";
+import { initComments } from "./comments.js";
 
-// ==================== KHỞI ĐỘNG ====================
 document.addEventListener("DOMContentLoaded", async () => {
+  // Require auth & validate token
+  requireAuth();
   const token = getToken();
-  if (!token) {
-    window.location.href = "../html/auth.html";
-    return;
-  }
+  if (!token) return (window.location.href = "../html/auth.html");
 
   try {
     const payload = parseJwt(token);
@@ -35,10 +33,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  requireAuth();
-
+  // Get query user id (or view self)
   const userId = getUserIdFromURL();
-  const myData = getUserData();
+  // getUserData is async — await it
+  const myData = await getUserData();
 
   if (!myData || !myData.id) {
     removeToken();
@@ -46,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Elements
+  // DOM elements
   const usernameEl = document.querySelector(".text-wrapper-2");
   const statsEls = document.querySelectorAll(".profile-stats span");
   const followBtnWrapper = document.querySelector(".follow-button");
@@ -54,13 +52,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   const profilePhoto = document.querySelector(".profile-photo");
   const postsSection = document.querySelector(".posts-section");
 
-  // ✅ Nếu không có userId -> xem hồ sơ chính mình
   const endpoint = userId ? `/users/${userId}` : "/users/me";
 
   try {
-    const user = await apiFetch(`${API_BASE_URL}${endpoint}`, "GET", null, token);
+    const user = await apiFetch(`${API_BASE_URL}${endpoint}`);
 
-    // ==================== HIỂN THỊ THÔNG TIN ====================
+    // Display info
     if (usernameEl) usernameEl.textContent = user.username || "Ẩn danh";
 
     if (profilePhoto) {
@@ -71,7 +68,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           ? safeUrl
           : `${API_BASE_URL}/${safeUrl}`;
       }
-
       profilePhoto.style.backgroundImage = `url(${avatarUrl})`;
       profilePhoto.style.backgroundSize = "cover";
       profilePhoto.style.backgroundPosition = "center";
@@ -83,32 +79,28 @@ document.addEventListener("DOMContentLoaded", async () => {
       statsEls[2].textContent = `${user.following?.length || 0} đang theo dõi`;
     }
 
-    // ==================== FOLLOW LOGIC ====================
+    // follow logic
     const viewedUserId = user._id || user.id;
     if (String(myData.id) === String(viewedUserId)) {
       if (followBtnWrapper) followBtnWrapper.style.display = "none";
-    } else if (followBtn) {
+    } else if (followBtnWrapper) {
       const isFollowing =
         user.followers?.some((f) => f._id?.toString?.() === myData.id) ||
         user.followers?.includes(myData.id);
 
-      followBtn.textContent = isFollowing ? "Đang theo dõi" : "Theo dõi";
+      if (followBtn) followBtn.textContent = isFollowing ? "Đang theo dõi" : "Theo dõi";
 
       followBtnWrapper.onclick = async () => {
         try {
           const data = await apiFetch(
             `${API_BASE_URL}/users/${viewedUserId}/follow`,
-            "POST",
-            null,
-            token
+            { method: "POST" }
           );
-
-          if (data.message.toLowerCase().includes("bỏ theo dõi")) {
+          if (data.message?.toLowerCase().includes("bỏ theo dõi")) {
             followBtn.textContent = "Theo dõi";
           } else {
             followBtn.textContent = "Đang theo dõi";
           }
-
           showAlert(data.message, "info");
         } catch (err) {
           handleApiError(err);
@@ -116,17 +108,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       };
     }
 
-    // ==================== HIỂN THỊ BÀI VIẾT ====================
+    // render posts on profile
     renderPosts(user.posts || [], postsSection);
   } catch (err) {
     handleApiError(err, "Không thể tải trang hồ sơ");
   }
 
-  // ==================== HEADER PROFILE (GÓC PHẢI) ====================
+  // header right avatar & link
   const profileLink = document.getElementById("profile-link");
   const profileAvatar = document.getElementById("profile-avatar");
 
-  const myDataHeader = myData; // dùng lại, tránh gọi lại getUserData()
+  const myDataHeader = myData;
   if (myDataHeader) {
     let avatarUrl = "../assets/image/default-avatar.png";
     if (myDataHeader.avatar) {
@@ -135,14 +127,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         ? safeUrl
         : `${API_BASE_URL}/${safeUrl}`;
     }
-
     if (profileAvatar) profileAvatar.src = avatarUrl;
-    if (profileLink)
-      profileLink.href = `../html/profile.html?user=${myDataHeader.id}`;
+    if (profileLink) profileLink.href = `../html/profile.html?user=${myDataHeader.id}`;
   }
 });
 
-// ==================== HÀM PHỤ ====================
+// helpers
 function getUserIdFromURL() {
   const params = new URLSearchParams(window.location.search);
   return params.get("user");
@@ -150,7 +140,6 @@ function getUserIdFromURL() {
 
 function renderPosts(posts, section) {
   if (!section) return;
-
   if (!Array.isArray(posts) || posts.length === 0) {
     section.innerHTML = `
       <div class="rectangle-2">
@@ -166,6 +155,7 @@ function renderPosts(posts, section) {
     const card = createPostCard(p);
     if (!card) return;
 
+    // setup comments for each card
     const commentsContainer = card.querySelector(".comments-container");
     const commentForm = card.querySelector(".comment-input");
     const commentTextarea = card.querySelector("textarea");

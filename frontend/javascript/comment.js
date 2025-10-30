@@ -1,25 +1,24 @@
-// comments.js
-import { API_BASE_URL, fetchData, getToken, handleApiError, escapeHTML, showAlert, getUserData, formatDate } from "./utils.js";
-import { createCommentCard } from "../javascript/createComponents.js";
+// frontend/javascript/comments.js
+import { API_BASE_URL, apiFetch, getToken, handleApiError, escapeHTML, showAlert, getUserData, formatDate } from "./utils.js";
+import { createCommentCard } from "./createComponents.js";
 
 /**
  * Render một comment vào container
- * Thêm nút xóa nếu comment thuộc về user hiện tại
  */
-function renderSingleComment(comment, container, prepend = false) {
+async function renderSingleComment(comment, container, prepend = false) {
   if (!container) return;
 
-  const currentUser = getUserData();
+  const currentUser = await getUserData();
   const commentCard = createCommentCard(comment);
 
-  // Thêm thời gian comment
+  // Thời gian
   const timeEl = document.createElement("span");
   timeEl.classList.add("comment-time");
   timeEl.textContent = formatDate(comment.createdAt);
   commentCard.appendChild(timeEl);
 
-  // Thêm nút xóa nếu comment của user hiện tại
-  if (currentUser && comment.userId._id === currentUser.id) {
+  // nút xóa nếu comment của current user
+  if (currentUser && (comment.userId?._id === currentUser.id || comment.userId === currentUser.id)) {
     const deleteBtn = document.createElement("button");
     deleteBtn.classList.add("comment-delete-btn");
     deleteBtn.textContent = "🗑️ Xóa";
@@ -34,18 +33,20 @@ function renderSingleComment(comment, container, prepend = false) {
 }
 
 /**
- * Load danh sách bình luận từ API và render
+ * Load danh sách bình luận
  */
 async function loadComments(postId, container) {
   if (!container) return;
   try {
-    const comments = await fetchData(`${API_BASE_URL}/comments/post/${postId}`, "GET");
+    const comments = await apiFetch(`${API_BASE_URL}/comments/post/${postId}`);
     container.innerHTML = "";
     if (!Array.isArray(comments) || comments.length === 0) {
       container.innerHTML = `<p class="text-muted">Chưa có bình luận nào.</p>`;
       return;
     }
-    comments.forEach(c => renderSingleComment(c, container));
+    for (const c of comments) {
+      await renderSingleComment(c, container);
+    }
   } catch (err) {
     handleApiError(err, "Không thể tải bình luận");
     container.innerHTML = `<p class="text-danger">Lỗi tải bình luận</p>`;
@@ -53,7 +54,7 @@ async function loadComments(postId, container) {
 }
 
 /**
- * Thêm bình luận mới
+ * Add comment
  */
 async function addComment(postId, container, text) {
   const token = getToken();
@@ -65,8 +66,12 @@ async function addComment(postId, container, text) {
 
   try {
     const safeText = escapeHTML(text);
-    const newComment = await fetchData(`${API_BASE_URL}/comments/${postId}`, "POST", { text: safeText }, token);
-    renderSingleComment(newComment, container, true);
+    const newComment = await apiFetch(`${API_BASE_URL}/comments/${postId}`, {
+      method: "POST",
+      body: { text: safeText }
+    });
+    // backend returns comment object
+    await renderSingleComment(newComment, container, true);
     showAlert("Bình luận đã được đăng!", "success");
   } catch (err) {
     handleApiError(err);
@@ -74,7 +79,7 @@ async function addComment(postId, container, text) {
 }
 
 /**
- * Xóa comment
+ * Delete comment
  */
 async function deleteComment(commentId, commentElement) {
   const token = getToken();
@@ -82,7 +87,7 @@ async function deleteComment(commentId, commentElement) {
   if (!confirm("Bạn có chắc muốn xóa bình luận này?")) return;
 
   try {
-    await fetchData(`${API_BASE_URL}/comments/${commentId}`, "DELETE", null, token);
+    await apiFetch(`${API_BASE_URL}/comments/${commentId}`, { method: "DELETE" });
     commentElement.remove();
     showAlert("Đã xóa bình luận!", "success");
   } catch (err) {
@@ -92,10 +97,6 @@ async function deleteComment(commentId, commentElement) {
 
 /**
  * Khởi tạo comment cho một post (hoặc nhiều post)
- * @param {string} postId 
- * @param {HTMLElement} container 
- * @param {HTMLFormElement} form 
- * @param {HTMLTextAreaElement} textarea 
  */
 function initComments(postId, container, form, textarea) {
   if (!postId || !container) return;

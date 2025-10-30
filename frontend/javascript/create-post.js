@@ -1,4 +1,4 @@
-// 📁 frontend/javascript/create-post.js
+// frontend/javascript/create-post.js
 import {
   API_BASE_URL,
   getToken,
@@ -7,12 +7,13 @@ import {
   showAlert,
   parseJwt,
   removeToken,
+  apiFetch,
 } from "./utils.js";
 import { createPostCard } from "./createComponents.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 🔐 Kiểm tra token & xác thực
   requireAuth();
+
   const token = getToken();
   if (!token) return redirectToAuth();
 
@@ -21,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return redirectToAuth();
   }
 
-  // 🎯 DOM elements
   const form = document.getElementById("create-post-form");
   const contentInput = document.getElementById("post-input");
   const postContainer = document.getElementById("post-container");
@@ -33,20 +33,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   form.append(previewBox, messageBox);
 
-  // 🖼️ Media buttons
   setupFilePicker(".photos-icon", "image", fileInput);
   setupFilePicker(".video-icon", "video", fileInput);
   setupFilePicker(".music-icon", "audio", fileInput);
 
-  // 🖱️ Drag & drop
   setupDragAndDrop(previewBox, handleSelectedFiles);
 
-  // 📂 Xử lý file
   fileInput.addEventListener("change", (e) =>
     handleSelectedFiles(Array.from(e.target.files))
   );
 
-  // 📝 Gửi bài viết
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     messageBox.textContent = "";
@@ -54,49 +50,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const content = contentInput.value.trim();
     if (!content && !selectedFiles.length) {
-      return showAlert(messageBox, "text-danger", "⚠️ Vui lòng nhập nội dung hoặc chọn file.");
+      return showAlert("⚠️ Vui lòng nhập nội dung hoặc chọn file.", "error");
     }
 
     try {
-      showAlert(messageBox, "text-info", "⏳ Đang đăng bài...");
+      showAlert("⏳ Đang đăng bài...", "info");
 
-      const post = await createPost(content, selectedFiles, token);
+      const post = await createPost(content, selectedFiles);
 
-      showAlert(messageBox, "text-success", "🎉 Đăng bài thành công!");
+      showAlert("🎉 Đăng bài thành công!", "success");
       if (post && postContainer) {
         const postCard = createPostCard(post);
         postContainer.prepend(postCard);
-        addViewPostButton(messageBox, post._id);
       }
 
       resetForm(contentInput, previewBox);
       selectedFiles = [];
     } catch (err) {
-      console.error("🔥 Lỗi khi đăng bài:", err);
-      showAlert(messageBox, "text-danger", `⚠️ ${err.message || "Lỗi kết nối server."}`);
+      console.error("Lỗi khi đăng bài:", err);
+      showAlert(err.message || "Lỗi khi đăng bài", "error");
     }
   });
 
-  // 📦 Các hàm phụ
   function handleSelectedFiles(files) {
     const MAX_SIZE = 10 * 1024 * 1024; // 10MB
     files.forEach((file) => {
       if (!["image", "video", "audio"].some((t) => file.type.startsWith(t))) {
-        return showAlert(messageBox, "text-danger", `❌ File ${file.name} không hợp lệ.`);
+        return showAlert(`❌ File ${file.name} không hợp lệ.`, "error");
       }
       if (file.size > MAX_SIZE) {
-        return showAlert(messageBox, "text-danger", `❌ File ${file.name} quá lớn (>10MB).`);
+        return showAlert(`❌ File ${file.name} quá lớn (>10MB).`, "error");
       }
 
       selectedFiles.push(file);
-      previewBox.appendChild(createPreviewItem(file, () => {
-        selectedFiles = selectedFiles.filter((f) => f !== file);
-      }));
+      previewBox.appendChild(
+        createPreviewItem(file, () => {
+          selectedFiles = selectedFiles.filter((f) => f !== file);
+        })
+      );
     });
   }
 });
 
-// 🔧 HÀM TIỆN ÍCH ---------------------------------------------------
+// helpers
 function redirectToAuth() {
   window.location.href = "../html/auth.html";
 }
@@ -147,7 +143,9 @@ function setupDragAndDrop(dropZone, onDropFiles) {
     dropZone.classList.add("dragover");
   });
 
-  dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+  dropZone.addEventListener("dragleave", () =>
+    dropZone.classList.remove("dragover")
+  );
   dropZone.addEventListener("drop", (e) => {
     e.preventDefault();
     dropZone.classList.remove("dragover");
@@ -170,38 +168,49 @@ function createPreviewItem(file, onRemove) {
   }
 
   wrapper.innerHTML = `${mediaHTML}<button class="remove-file-btn">❌</button>`;
-  wrapper.querySelector(".remove-file-btn").addEventListener("click", () => {
-    onRemove();
-    wrapper.remove();
-  });
+  wrapper
+    .querySelector(".remove-file-btn")
+    .addEventListener("click", () => {
+      onRemove();
+      wrapper.remove();
+    });
 
   return wrapper;
 }
 
-async function createPost(content, files, token) {
-  const formData = new FormData();
-  if (content) formData.append("content", escapeHTML(content));
-  files.forEach((file) => formData.append("file", file));
+async function createPost(content, files) {
+  const token = getToken();
+  if (!token) throw new Error("Vui lòng đăng nhập trước khi đăng bài.");
 
-  const res = await fetch(`${API_BASE_URL}/posts`, {
+  // upload files first if any (assume backend accepts /media/upload)
+  const mediaUrls = [];
+  for (const file of files) {
+    const formData = new FormData();
+    formData.append("file", file);
+    // use fetch here so we can send FormData; apiFetch could be extended to accept FormData too
+    const res = await fetch(`${API_BASE_URL}/media/upload`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Upload thất bại");
+    // assume backend returns { url }
+    mediaUrls.push(data.url || data.file?.url || data.file?.filename);
+  }
+
+  const payload = {
+    content: content ? escapeHTML(content) : "",
+    media: mediaUrls.length ? mediaUrls : undefined,
+  };
+
+  const created = await apiFetch(`${API_BASE_URL}/posts`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
+    body: payload,
   });
 
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || "Không thể đăng bài");
-  return data.post;
-}
-
-function addViewPostButton(container, postId) {
-  const btn = document.createElement("button");
-  btn.textContent = "Xem bài viết";
-  btn.className = "btn btn-primary mt-2";
-  btn.addEventListener("click", () => {
-    window.location.href = `../html/posts.html?id=${postId}`;
-  });
-  container.appendChild(btn);
+  // backend should return post in created
+  return created.post || created;
 }
 
 function resetForm(input, previewBox) {

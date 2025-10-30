@@ -1,10 +1,9 @@
-// ===================================================
-// ✅ BƯỚC 1: IMPORT CÁC MODULE CẦN THIẾT
-// ===================================================
+// frontend/javascript/auth.js
 import { auth, provider, signInWithPopup, signOut } from "./firebase.js";
 import {
   API_BASE_URL,
   getToken,
+  getValidToken,
   setToken,
   removeToken,
   parseJwt,
@@ -13,12 +12,8 @@ import {
 } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // ===================================================
-  // 🧩 HÀM PHỤ TRỢ
-  // ===================================================
   const redirectTo = (path) => (window.location.href = path);
 
-  // Xoá toàn bộ cache khi logout hoặc token hết hạn
   async function clearCaches() {
     if ("caches" in window) {
       const names = await caches.keys();
@@ -26,16 +21,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Hiện / ẩn spinner khi đang xử lý API
   function toggleSpinner(show) {
     const spinner = document.querySelector(".spinner");
     if (!spinner) return;
     spinner.style.display = show ? "block" : "none";
   }
 
-  // ===================================================
-  // 🔍 BƯỚC 2: KIỂM TRA JWT (AUTH GUARD)
-  // ===================================================
+  // AUTH GUARD: try to get a valid token (may refresh)
   const token = await getValidToken();
   const currentPath = window.location.pathname;
 
@@ -45,12 +37,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       const now = Date.now() / 1000;
 
       if (payload.exp < now) {
-        // Token hết hạn → xoá và về trang auth
+        // expired — clear and redirect to auth
         removeToken();
         await clearCaches();
         if (!currentPath.endsWith("auth.html")) redirectTo("../html/auth.html");
       } else if (currentPath.endsWith("auth.html")) {
-        // Đã login mà vẫn ở trang auth → về index
+        // already logged in, don't stay on auth page
         redirectTo("../html/index.html");
       }
     } catch (err) {
@@ -59,13 +51,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (!currentPath.endsWith("auth.html")) redirectTo("../html/auth.html");
     }
   } else {
-    // Không có token → chỉ cho phép ở trang auth
+    // no token → only allow auth page
     if (!currentPath.endsWith("auth.html")) redirectTo("../html/auth.html");
   }
 
-  // ===================================================
-  // 🧾 BƯỚC 3: FORM ĐĂNG KÝ / ĐĂNG NHẬP
-  // ===================================================
+  // FORM
   const form = document.querySelector(".auth-form");
   const emailInput = document.querySelector("#email-input");
   const passwordInput = document.querySelector("#password-input");
@@ -74,32 +64,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (form) {
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-
       const action = event.submitter?.value || "login";
       const email = emailInput.value.trim();
       const password = passwordInput.value.trim();
 
-      // --- Validation cơ bản ---
       if (!email || !password)
         return showAlert("Vui lòng nhập đầy đủ email và mật khẩu.", "error");
 
-      if (!email.includes("@"))
-        return showAlert("Email không hợp lệ.", "error");
+      if (!email.includes("@")) return showAlert("Email không hợp lệ.", "error");
 
       if (password.length < 6)
         return showAlert("Mật khẩu phải dài ít nhất 6 ký tự.", "error");
 
-      // --- Submit ---
       toggleSpinner(true);
       await submitAuth(action, email, password);
       toggleSpinner(false);
     });
   }
 
-  // ===================================================
-  // 🧠 BƯỚC 4: HÀM XỬ LÝ LOGIN / SIGNUP
-  // ===================================================
-  const submitAuth = async (action, email, password) => {
+  // SUBMIT
+  async function submitAuth(action, email, password) {
     const endpoint =
       action === "signup"
         ? `${API_BASE_URL}/auth/register`
@@ -123,29 +107,23 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (action === "signup") {
         showAlert("Đăng ký thành công! Hãy đăng nhập để tiếp tục.", "success");
       } else {
-        setToken(data.token);
-        localStorage.setItem("refreshToken", data.refreshToken);
+        setToken(data.token, data.refreshToken);
         showAlert("Đăng nhập thành công!", "success");
 
-        const payload = parseJwt(getToken());
-        console.log("✅ User ID:", payload.userId);
-
-        // Delay nhẹ để alert hiển thị
-        setTimeout(() => redirectTo("../html/index.html"), 800);
+        // small UX delay so toast/alert shows
+        setTimeout(() => redirectTo("../html/index.html"), 700);
       }
     } catch (err) {
       handleApiError(err);
     }
-  };
+  }
 
-  // ===================================================
-  // 🚪 BƯỚC 5: LOGOUT
-  // ===================================================
+  // LOGOUT
   const logoutBtn = document.querySelector(".logout-button");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
       try {
-        await signOut(auth); // ✅ Xoá session Firebase luôn
+        await signOut(auth); // firebase session cleared
       } catch (err) {
         console.warn("Firebase signOut failed:", err);
       }
@@ -155,9 +133,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // ===================================================
-  // 🔥 BƯỚC 6: GOOGLE SIGN-IN (FIREBASE)
-  // ===================================================
+  // GOOGLE SIGN-IN
   if (googleBtn) {
     googleBtn.addEventListener("click", async () => {
       toggleSpinner(true);
@@ -175,11 +151,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Lỗi đăng nhập Google");
 
-        setToken(data.token);
+        setToken(data.token, data.refreshToken);
         showAlert("Đăng nhập Google thành công!", "success");
-
-        // Delay nhẹ để UX mượt
-        setTimeout(() => redirectTo("../html/index.html"), 800);
+        setTimeout(() => redirectTo("../html/index.html"), 700);
       } catch (err) {
         handleApiError(err);
       } finally {

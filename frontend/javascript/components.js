@@ -1,15 +1,16 @@
-// 📁 frontend/javascript/components.js
+// FILE: frontend/javascript/components.js
 export async function loadComponent(id, path) {
   try {
     const res = await fetch(path);
+    if (!res.ok) throw new Error(`Failed to load ${path}: ${res.status}`);
     const html = await res.text();
-    document.getElementById(id).innerHTML = html;
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
   } catch (err) {
     console.error(`Lỗi khi tải ${path}:`, err);
   }
 }
 
-// Load nhiều component song song
 export async function loadAllComponents() {
   await Promise.all([
     loadComponent('header-container', '../components/header.html'),
@@ -18,9 +19,9 @@ export async function loadAllComponents() {
     loadComponent('comment-card', '../components/comment.html'),
     loadComponent('notification-card', '../components/notification-card.html')
   ]);
-
   console.log("✅ Tất cả component HTML đã được load!");
 }
 
-// 🔁 Đảm bảo đồng bộ runtime
-window.addEventListener("DOMContentLoaded", loadAllComponents);
+window.addEventListener("DOMContentLoaded", () => {
+  loadAllComponents().catch((e) => console.warn('loadAllComponents failed:', e));
+});

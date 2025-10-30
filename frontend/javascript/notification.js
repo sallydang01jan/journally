@@ -1,36 +1,33 @@
-// 📁 frontend/javascript/notification.js
-import { API_BASE_URL, getToken, apiFetch, formatDate, parseJwt, removeToken, requireAuth } from "./utils.js";
+// frontend/javascript/notification.js
+import { API_BASE_URL, getToken, apiFetch, formatDate, requireAuth, showAlert, handleApiError } from "./utils.js";
 import { createNotificationCard } from "./createComponents.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // ✅ Bắt buộc login
-  requireAuth(); // nếu chưa login sẽ redirect sang auth.html
+  requireAuth();
 
   const token = getToken();
   const notificationCard = document.getElementById("notification-card");
-
-  // Ẩn nút notification nếu chưa login
   const notifBtn = document.querySelector(".notification-button");
   if (!token && notifBtn) {
     notifBtn.style.display = "none";
   }
 
-  // 🟢 Lấy danh sách thông báo
   async function fetchNotifications() {
     try {
       const notifications = await apiFetch(`${API_BASE_URL}/notifications`);
-      renderNotifications(notifications);
+      renderNotifications(notifications || []);
     } catch (err) {
       console.error("Lỗi tải thông báo:", err);
-      notificationCard.innerHTML = `<p class="text-danger">⚠️ Không thể tải thông báo.</p>`;
+      if (notificationCard) notificationCard.innerHTML = `<p class="text-danger">⚠️ Không thể tải thông báo.</p>`;
+      handleApiError(err);
     }
   }
 
-  // 🟡 Hiển thị danh sách thông báo
   function renderNotifications(list) {
-    notificationCard.innerHTML = ""; // reset trước
+    if (!notificationCard) return;
+    notificationCard.innerHTML = "";
 
-    if (!list.length) {
+    if (!Array.isArray(list) || list.length === 0) {
       notificationCard.innerHTML = `<p class="text-muted text-center mt-4">Chưa có thông báo nào 🌙</p>`;
       return;
     }
@@ -39,12 +36,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       const card = createNotificationCard({
         ...n,
         formattedTime: formatDate(n.createdAt),
-        user: n.user, 
+        user: n.user,
       });
 
       card.dataset.id = n._id;
 
-      // Gắn event riêng cho từng notification
       const markBtn = card.querySelector(".mark-as-read-button");
       const closeBtn = card.querySelector(".close-button");
 
@@ -55,36 +51,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // 🟣 Đánh dấu đã đọc
   async function handleMarkRead(id, card) {
     try {
-      await apiFetch(`${API_BASE_URL}/notifications/${id}/read`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await apiFetch(`${API_BASE_URL}/notifications/${id}/read`, { method: "PUT" });
       card.classList.add("read");
       const markBtn = card.querySelector(".mark-as-read-button");
       if (markBtn) markBtn.remove();
     } catch (err) {
       console.error("Lỗi đánh dấu đã đọc:", err);
+      handleApiError(err);
     }
   }
 
-  // 🔴 Xóa thông báo
   async function handleDelete(id, card) {
     if (!confirm("Bạn chắc chắn muốn xoá thông báo này?")) return;
-
     try {
-      await apiFetch(`${API_BASE_URL}/notifications/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await apiFetch(`${API_BASE_URL}/notifications/${id}`, { method: "DELETE" });
       card.remove();
+      showAlert("Đã xoá thông báo", "success");
     } catch (err) {
       console.error("Lỗi xoá thông báo:", err);
+      handleApiError(err);
     }
   }
 
-  // Gọi khi trang load
   fetchNotifications();
 });
