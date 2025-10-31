@@ -6,19 +6,19 @@
   <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;" />
   <title>Journally - Đăng nhập/Đăng ký</title>
 
-  <!-- CSS -->
   <link rel="stylesheet" href="../css/components.css">
   <link rel="stylesheet" href="../css/auth.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- Dùng defer cho JS module -->
+  <script type="module" src="../javascript/utils.js" defer></script>
   <script type="module" src="../javascript/components.js" defer></script>
   <script type="module" src="../javascript/firebase.js" defer></script>
   <script type="module" src="../javascript/createComponents.js" defer></script>
   <script type="module" src="../javascript/auth.js" defer></script>
 
-  <!-- Bootstrap Bundle -->
-  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -37,6 +37,10 @@
       <header class="sign-in-sign-up">
         <h3 class="text-wrapper-2" id="form-title">Đăng nhập/Đăng ký</h3>
       </header>
+
+      <div class="spinner" style="display:none;">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+      </div>
 
       <form class="auth-form" action="/auth" method="post" novalidate>
         <div class="email-form">
@@ -72,7 +76,7 @@
           </button>
         </div>
 
-        <button type="submit" class="sign-in-with-google">
+        <button type="button" class="sign-in-with-google">
           <i class="fa-brands fa-google" style="color: #C6EAFA; -webkit-text-stroke: 1px #000;"></i> 
           Đăng nhập với Google
         </button>
