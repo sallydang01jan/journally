@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 Do you want the website tour?
 I could take you to all the features
 And I promise none of this is a metaphor
