@@ -1,28 +1,9 @@
 // FILE: frontend/javascript/upload.js
-import { apiFetch, showAlert, requireAuth, getToken, parseJwt, removeToken, API_BASE_URL } from './utils.js';
+import { apiFetch, showAlert, requireAuth, getValidToken } from './utils.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const token = getToken();
-  if (!token) {
-    window.location.href = '../html/auth.html';
-    return;
-  }
-
-  try {
-    const payload = parseJwt(token);
-    const now = Date.now() / 1000;
-    if (payload.exp < now) {
-      removeToken();
-      window.location.href = '../html/auth.html';
-      return;
-    }
-  } catch (err) {
-    removeToken();
-    window.location.href = '../html/auth.html';
-    return;
-  }
-
-  requireAuth();
+document.addEventListener('DOMContentLoaded', async () => {
+  const token = await getValidToken();
+  if (!token) return requireAuth();
 
   const uploadForm = document.getElementById('upload-form');
   const fileInput = document.getElementById('file-input');
@@ -33,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  // 🔍 Xem trước file
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     preview.innerHTML = '';
@@ -45,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     else showAlert('❌ File không hợp lệ.', 'error');
   });
 
+  // 📤 Upload file
   uploadForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const file = fileInput.files[0];

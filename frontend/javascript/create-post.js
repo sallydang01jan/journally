@@ -18,8 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!token) return redirectToAuth();
 
   if (isTokenExpired(token)) {
-    removeToken();
-    return redirectToAuth();
+    handleExpiredToken();
+    return;
   }
 
   const form = document.getElementById("create-post-form");
@@ -36,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupFilePicker(".photos-icon", "image", fileInput);
   setupFilePicker(".video-icon", "video", fileInput);
   setupFilePicker(".music-icon", "audio", fileInput);
-
   setupDragAndDrop(previewBox, handleSelectedFiles);
 
   fileInput.addEventListener("change", (e) =>
@@ -68,7 +67,13 @@ document.addEventListener("DOMContentLoaded", () => {
       selectedFiles = [];
     } catch (err) {
       console.error("Lỗi khi đăng bài:", err);
-      showAlert(err.message || "Lỗi khi đăng bài", "error");
+
+      // ✅ Nếu API trả 401, nghĩa là token hết hạn → logout & redirect
+      if (err.status === 401 || /token/i.test(err.message)) {
+        handleExpiredToken();
+      } else {
+        showAlert(err.message || "Lỗi khi đăng bài", "error");
+      }
     }
   });
 
@@ -95,6 +100,12 @@ document.addEventListener("DOMContentLoaded", () => {
 // helpers
 function redirectToAuth() {
   window.location.href = "../html/auth.html";
+}
+
+function handleExpiredToken() {
+  removeToken();
+  showAlert("🔒 Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.", "warning");
+  setTimeout(() => redirectToAuth(), 1500);
 }
 
 function isTokenExpired(token) {
@@ -142,7 +153,6 @@ function setupDragAndDrop(dropZone, onDropFiles) {
     e.preventDefault();
     dropZone.classList.add("dragover");
   });
-
   dropZone.addEventListener("dragleave", () =>
     dropZone.classList.remove("dragover")
   );
@@ -182,20 +192,22 @@ async function createPost(content, files) {
   const token = getToken();
   if (!token) throw new Error("Vui lòng đăng nhập trước khi đăng bài.");
 
-  // upload files first if any (assume backend accepts /media/upload)
   const mediaUrls = [];
   for (const file of files) {
     const formData = new FormData();
     formData.append("file", file);
-    // use fetch here so we can send FormData; apiFetch could be extended to accept FormData too
+
     const res = await fetch(`${API_BASE_URL}/media/upload`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: formData,
     });
+
+    if (res.status === 401) throw { status: 401, message: "Token expired" };
+
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || "Upload thất bại");
-    // assume backend returns { url }
+
     mediaUrls.push(data.url || data.file?.url || data.file?.filename);
   }
 
@@ -209,7 +221,6 @@ async function createPost(content, files) {
     body: payload,
   });
 
-  // backend should return post in created
   return created.post || created;
 }
 

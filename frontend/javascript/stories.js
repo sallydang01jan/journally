@@ -1,5 +1,5 @@
 // FILE: frontend/javascript/stories.js
-import { API_BASE_URL, apiFetch, formatDate, getToken, escapeHTML, showAlert, handleApiError } from './utils.js';
+import { apiFetch, formatDate, getToken, escapeHTML, showAlert, handleApiError } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const addStoryBtn = document.querySelector('.add-story .frame');
@@ -32,20 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderStories(stories) {
     storiesContainer.querySelectorAll('.story').forEach(s => s.remove());
-
     stories.forEach(story => {
       const article = document.createElement('article');
       article.classList.add('story');
 
-      const username = escapeHTML(story.user.username || 'Ẩn danh');
+      const username = escapeHTML(story.user?.username || 'Ẩn danh');
       const caption = escapeHTML(story.caption || '');
       const timestamp = story.createdAt ? `<span class="timestamp">${formatDate(story.createdAt)}</span>` : '';
 
-      if (story.type === 'image') {
-        article.innerHTML = `\n          <img class="ellipse" src="${story.mediaUrl}" alt="${username}" />\n          <span class="text-wrapper">${username}</span>\n          ${timestamp}\n        `;
-      } else if (story.type === 'video') {
-        article.innerHTML = `\n          <video class="ellipse" muted><source src="${story.mediaUrl}" type="video/mp4"></video>\n          <span class="text-wrapper">${username}</span>\n          ${timestamp}\n        `;
-      }
+      article.innerHTML = story.type === 'video'
+        ? `<video class="ellipse" muted><source src="${story.mediaUrl}" type="video/mp4"></video><span class="text-wrapper">${username}</span>${timestamp}`
+        : `<img class="ellipse" src="${story.mediaUrl}" alt="${username}" /><span class="text-wrapper">${username}</span>${timestamp}`;
 
       article.addEventListener('click', () => openStory(story));
       storiesContainer.appendChild(article);
@@ -58,7 +55,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const caption = escapeHTML(story.caption || '');
     const timestamp = story.createdAt ? formatDate(story.createdAt) : '';
 
-    overlay.innerHTML = `\n      <div class="story-view">\n        ${story.type === 'image' ? `<img src="${story.mediaUrl}" alt="Story" />` : `<video controls autoplay><source src="${story.mediaUrl}" type="video/mp4"></video>`}\n        <p>${caption}</p>\n        <p class="timestamp">${timestamp}</p>\n        <button class="close-btn">×</button>\n      </div>\n    `;
+    overlay.innerHTML = `
+      <div class="story-view">
+        ${story.type === 'image'
+          ? `<img src="${story.mediaUrl}" alt="Story" />`
+          : `<video controls autoplay><source src="${story.mediaUrl}" type="video/mp4"></video>`}
+        <p>${caption}</p>
+        <p class="timestamp">${timestamp}</p>
+        <button class="close-btn">×</button>
+      </div>
+    `;
 
     document.body.appendChild(overlay);
     overlay.querySelector('.close-btn').addEventListener('click', () => overlay.remove());
@@ -76,23 +82,16 @@ document.addEventListener('DOMContentLoaded', () => {
   fileInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
     const type = file.type.startsWith('video/') ? 'video' : 'image';
     const formData = new FormData();
     formData.append('file', file);
 
     try {
-      const uploadRes = await fetch(`${API_BASE_URL}/media/upload`, { method: 'POST', body: formData });
-      const uploadData = await uploadRes.json();
-      if (!uploadRes.ok) throw new Error(uploadData.message || 'Upload failed');
-
+      const uploadData = await apiFetch('/media/upload', { method: 'POST', body: formData });
       const mediaUrl = uploadData.url || uploadData.file?.url || uploadData.file?.filename;
-      const token = getToken();
 
-      await fetch(`${API_BASE_URL}/stories`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ mediaUrl, type, caption: '' })
-      });
+      await apiFetch('/stories', { method: 'POST', body: { mediaUrl, type, caption: '' } });
 
       showAlert('✅ Tin đã được đăng!', 'success');
       loadStories();

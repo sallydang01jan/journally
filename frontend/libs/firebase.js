@@ -1,7 +1,12 @@
 // firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js"; // cần import thêm dòng này!
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  signInWithPopup, 
+  signOut // 👈 thêm dòng này để có thể logout Firebase
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA6fmke7peD9Tey4-5wWUG4YdVw2vifzuQ",
@@ -20,4 +25,4 @@ const provider = new GoogleAuthProvider();
 const storage = getStorage(app);
 
 // 🚀 Xuất ra để file khác import
-export { app, auth, provider, signInWithPopup, storage };
+export { app, auth, provider, signInWithPopup, signOut, storage };

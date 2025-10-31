@@ -3,16 +3,20 @@
   src: url('../assets/fonts/BHN\ Editorial\ New\ Ultra\ Light.ttf'); /* Locate the .ttf file within your directory*/
 }
 
-/* Header container */
+/* ================================
+   Header tổng thể
+================================ */
 .box {
   position: relative;
   width: 100%;
-  height: 50px;
+  height: auto;
   background: #ffffff;
   border: 1px solid #000000;
 }
 
-/* Header khi chưa đăng nhập */
+/* ================================
+   Header khi chưa đăng nhập
+================================ */
 .header-not-logged-in {
   display: flex;
   justify-content: space-between;
@@ -27,7 +31,6 @@
   object-fit: contain;
 }
 
-/* Nút đăng nhập/đăng ký */
 .property-sign-in {
   background-color: #c6eafa;
   border: 1px solid #000000;
@@ -45,11 +48,9 @@
   transform: translateY(-2px);
 }
 
-.property-sign-in:active {
-  transform: translateY(0);
-}
-
-/* Header khi đã đăng nhập */
+/* ================================
+   Header khi đã đăng nhập
+================================ */
 .header-logged-in {
   display: flex;
   justify-content: space-between;
@@ -57,42 +58,65 @@
   background: #FFF8D0;
   border: 1px solid #000000;
   padding: 10px 30px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: transform 0.3s ease;
 }
 
-.header-logged-in .logo {
+.header-logo {
   height: 60px;
-  width: 200px;
-  background-image: url("../assets/image/logo.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: left center;
 }
 
-.user-icon {
-  background-image: url("../assets/image/user.png");
-  background-size: cover;
-  width: 60px;
-  height: 60px;
+.user-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-toggle {
+  display: flex;
+  align-items: center;
+  background: none;
   border: none;
-  background-color: transparent;
   cursor: pointer;
+  gap: 8px;
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffff;
   transition: transform 0.2s ease-in-out;
 }
 
-.user-icon:hover {
+.user-avatar:hover {
   transform: scale(1.05);
 }
-/* Dropdown tài khoản */
+
+.user-name {
+  font-weight: 600;
+  color: #333;
+  font-family: "BHN Editorial New-UltraLight", Helvetica, Arial, sans-serif;
+}
+
+/* ================================
+   Dropdown tài khoản
+================================ */
 .account-options {
   position: absolute;
-  top: 100px;
-  right: 40px;
+  top: 110%;
+  right: 0;
   background: #ffffff;
   border: 1px solid #000000;
   border-radius: 10px;
   padding: 10px;
   width: 200px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: right;
 }
 
 .logout-button {
@@ -110,31 +134,9 @@
   background: #b0dff0;
 }
 
-/* 👇 Thêm đoạn này ở đây */
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.user-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ffffff;
-  position: relative;
-  bottom: 35px;
-}
-
-.user-name {
-  font-weight: 600;
-  color: #333;
-  position: relative;
-  bottom: 30px;
-}
-
-/* Accessibility helpers */
+/* ================================
+   Accessibility helpers
+================================ */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -146,7 +148,30 @@
   border: 0;
 }
 
-/* Responsive */
+.main-header {
+  position: relative;
+  width: 100%;
+  z-index: 100;
+}
+
+/* Giúp ẩn hoàn toàn header không dùng */
+#header-not-logged-in[hidden],
+#header-logged-in[hidden] {
+  display: none !important;
+}
+
+/* Đảm bảo layout không trùng vị trí */
+#header-not-logged-in,
+#header-logged-in {
+  position: relative;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+/* ================================
+   Responsive
+================================ */
 @media (max-width: 768px) {
   .header-not-logged-in,
   .header-logged-in {
@@ -155,23 +180,21 @@
     padding: 10px 15px;
   }
 
-  .logo-ng,
-  .logo {
-    height: clamp(40px, 8vw, 60px);
-  }
-
   .property-sign-in {
     font-size: 18px;
     padding: 10px 20px;
     margin-top: 10px;
   }
 
-  .user-icon {
+  .user-avatar {
     width: 40px;
     height: 40px;
   }
-}
 
+  .user-name {
+    font-size: 14px;
+  }
+}
 
 /* footer */
 .footer {

@@ -1,5 +1,5 @@
-
 // FILE: frontend/javascript/header.js
+import { auth, signOut } from "./firebase.js"; // 🔥 import thêm signOut
 import { isAuthenticated, getUserData, removeToken } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -7,54 +7,62 @@ document.addEventListener('DOMContentLoaded', async () => {
   const headerNotLoggedIn = document.getElementById('header-not-logged-in');
   const accountOptions = document.querySelector('.account-options');
   const logoutBtn = document.querySelector('.logout-button');
-  const userIcon = document.querySelector('.user-icon');
+  const userToggle = document.querySelector('.user-toggle');
   const userNameDisplay = document.querySelector('.user-name');
   const userAvatar = document.querySelector('.user-avatar');
 
+  // Hiển thị header dựa vào token
   if (isAuthenticated()) {
-    if (headerLoggedIn) headerLoggedIn.hidden = false;
-    if (headerNotLoggedIn) headerNotLoggedIn.hidden = true;
+    headerLoggedIn.hidden = false;
+    headerNotLoggedIn.hidden = true;
 
     try {
       const user = await getUserData();
-      if (userNameDisplay) userNameDisplay.textContent = user.username || user.name || 'User';
-      if (userAvatar && user.avatar) userAvatar.src = user.avatar;
+      userNameDisplay.textContent = user.username || user.name || 'User';
+      if (user.avatar) userAvatar.src = user.avatar;
     } catch (err) {
       console.warn('Không thể lấy user trong header:', err);
     }
   } else {
-    if (headerLoggedIn) headerLoggedIn.hidden = true;
-    if (headerNotLoggedIn) headerNotLoggedIn.hidden = false;
+    headerLoggedIn.hidden = true;
+    headerNotLoggedIn.hidden = false;
   }
 
-  if (userIcon) {
-    userIcon.addEventListener('click', () => {
-      if (accountOptions) accountOptions.hidden = !accountOptions.hidden;
+  // Toggle menu user
+  if (userToggle) {
+    userToggle.addEventListener('click', () => {
+      accountOptions.hidden = !accountOptions.hidden;
     });
 
     document.addEventListener('click', (e) => {
-      if (!userIcon.contains(e.target) && accountOptions && !accountOptions.contains(e.target)) {
+      if (!userToggle.contains(e.target) && !accountOptions.contains(e.target)) {
         accountOptions.hidden = true;
       }
     });
   }
 
+  // 🔥 Logout thực sự: Firebase + token local
   if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-      removeToken();
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await signOut(auth); // sign out khỏi Firebase
+      } catch (err) {
+        console.error("Firebase signOut error:", err);
+      }
+      removeToken(); // xóa token localStorage
       window.location.href = '../html/auth.html';
     });
   }
 
+  // Ẩn header khi cuộn xuống
   let lastScroll = 0;
   window.addEventListener('scroll', () => {
     const currentScroll = window.scrollY;
     if (headerLoggedIn) {
-      if (currentScroll > lastScroll && currentScroll > 100) {
-        headerLoggedIn.style.transform = 'translateY(-100%)';
-      } else {
-        headerLoggedIn.style.transform = 'translateY(0)';
-      }
+      headerLoggedIn.style.transform =
+        currentScroll > lastScroll && currentScroll > 100
+          ? 'translateY(-100%)'
+          : 'translateY(0)';
     }
     lastScroll = currentScroll;
   });
