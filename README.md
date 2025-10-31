@@ -1,5 +1,4 @@
 # journally
-journally
 hello! this is journally! 🩵 Tổng quan
 
 Journally là một nền tảng mạng xã hội dạng “nhật ký số”, nơi người dùng có thể: Đăng bài viết (viết nhật ký, chia sẻ cảm xúc, hình ảnh, âm nhạc, v.v.) Theo dõi người khác và xem bài viết của họ Nhận thông báo (khi ai đó theo dõi, bình luận, v.v.) Tùy chỉnh giao diện (như dán ảnh polaroid, phong bì thư, hoặc âm nhạc) Phong cách thiết kế tổng thể là vintage pastel, với tông nền sọc xanh trắng như giấy viết thư hoặc sổ tay, tạo cảm giác nhẹ nhàng, riêng tư, và hoài cổ.
