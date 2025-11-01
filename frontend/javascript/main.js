@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       formData.append('file', file);
 
       try {
-        const uploadRes = await fetch(`${API_BASE_URL}/media/upload`, {
+        const uploadRes = await fetch(`${API_BASE_URL}/upload/media`, {
           method: 'POST',
           body: formData,
           headers: { Authorization: `Bearer ${token}` }

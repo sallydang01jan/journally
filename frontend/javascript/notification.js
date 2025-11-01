@@ -1,5 +1,5 @@
 // frontend/javascript/notification.js
-import { API_BASE_URL, getToken, apiFetch, formatDate, requireAuth, showAlert, handleApiError } from "./utils.js";
+import { getToken, apiFetch, formatDate, requireAuth, showAlert, handleApiError } from "./utils.js";
 import { createNotificationCard } from "./createComponents.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -8,21 +8,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   const token = getToken();
   const notificationCard = document.getElementById("notification-card");
   const notifBtn = document.querySelector(".notification-button");
+
+  // Ẩn nút nếu chưa đăng nhập
   if (!token && notifBtn) {
     notifBtn.style.display = "none";
   }
 
+  // 🔔 Lấy danh sách thông báo
   async function fetchNotifications() {
     try {
-      const notifications = await apiFetch(`${API_BASE_URL}/notifications`);
+      const notifications = await apiFetch(`/notifications`);
       renderNotifications(notifications || []);
     } catch (err) {
       console.error("Lỗi tải thông báo:", err);
-      if (notificationCard) notificationCard.innerHTML = `<p class="text-danger">⚠️ Không thể tải thông báo.</p>`;
+      if (notificationCard) {
+        notificationCard.innerHTML = `<p class="text-danger">⚠️ Không thể tải thông báo.</p>`;
+      }
       handleApiError(err);
     }
   }
 
+  // 🎨 Hiển thị danh sách
   function renderNotifications(list) {
     if (!notificationCard) return;
     notificationCard.innerHTML = "";
@@ -51,9 +57,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  // ✅ Đánh dấu đã đọc
   async function handleMarkRead(id, card) {
     try {
-      await apiFetch(`${API_BASE_URL}/notifications/${id}/read`, { method: "PUT" });
+      await apiFetch(`/notifications/${id}/read`, { method: "PUT" });
       card.classList.add("read");
       const markBtn = card.querySelector(".mark-as-read-button");
       if (markBtn) markBtn.remove();
@@ -63,10 +70,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // 🗑️ Xóa thông báo
   async function handleDelete(id, card) {
     if (!confirm("Bạn chắc chắn muốn xoá thông báo này?")) return;
     try {
-      await apiFetch(`${API_BASE_URL}/notifications/${id}`, { method: "DELETE" });
+      await apiFetch(`/notifications/${id}`, { method: "DELETE" });
       card.remove();
       showAlert("Đã xoá thông báo", "success");
     } catch (err) {

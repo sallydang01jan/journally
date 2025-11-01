@@ -1,4 +1,3 @@
-// FILE: frontend/javascript/upload.js
 import { apiFetch, showAlert, requireAuth, getValidToken } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -37,9 +36,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     formData.append('file', file);
 
     try {
-      const data = await apiFetch('/media/upload', { method: 'POST', body: formData, skipJson: true });
+      const data = await apiFetch('/upload/media', { method: 'POST', body: formData });
       showAlert('✅ Tải lên thành công!', 'success');
-      if (data && data.url) preview.innerHTML += `<p><a href="${data.url}" target="_blank">${data.url}</a></p>`;
+      if (data?.url) preview.innerHTML += `<p><a href="${data.url}" target="_blank">${data.url}</a></p>`;
       fileInput.value = '';
     } catch (err) {
       console.error('🔥 Lỗi upload:', err);

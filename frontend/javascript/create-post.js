@@ -1,6 +1,4 @@
-// frontend/javascript/create-post.js
 import {
-  API_BASE_URL,
   getToken,
   escapeHTML,
   requireAuth,
@@ -54,10 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       showAlert("⏳ Đang đăng bài...", "info");
-
       const post = await createPost(content, selectedFiles);
-
       showAlert("🎉 Đăng bài thành công!", "success");
+
       if (post && postContainer) {
         const postCard = createPostCard(post);
         postContainer.prepend(postCard);
@@ -67,8 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
       selectedFiles = [];
     } catch (err) {
       console.error("Lỗi khi đăng bài:", err);
-
-      // ✅ Nếu API trả 401, nghĩa là token hết hạn → logout & redirect
       if (err.status === 401 || /token/i.test(err.message)) {
         handleExpiredToken();
       } else {
@@ -97,7 +92,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// helpers
+// ==== Helpers ====
+
 function redirectToAuth() {
   window.location.href = "../html/auth.html";
 }
@@ -197,17 +193,14 @@ async function createPost(content, files) {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch(`${API_BASE_URL}/media/upload`, {
+    const res = await apiFetch("/upload/media", {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
       body: formData,
+      skipJson: true,
     });
 
-    if (res.status === 401) throw { status: 401, message: "Token expired" };
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Upload thất bại");
-
+    if (!res || res.status === 401) throw { status: 401, message: "Token expired" };
+    const data = await res.json?.() || res;
     mediaUrls.push(data.url || data.file?.url || data.file?.filename);
   }
 
@@ -216,11 +209,7 @@ async function createPost(content, files) {
     media: mediaUrls.length ? mediaUrls : undefined,
   };
 
-  const created = await apiFetch(`${API_BASE_URL}/posts`, {
-    method: "POST",
-    body: payload,
-  });
-
+  const created = await apiFetch("/posts", { method: "POST", body: payload });
   return created.post || created;
 }
 

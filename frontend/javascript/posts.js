@@ -1,7 +1,6 @@
 import {
   apiFetch,
   getToken,
-  API_BASE_URL,
   handleApiError,
   escapeHTML,
   removeToken,
@@ -30,7 +29,7 @@ async function loadFeed() {
   }
 
   try {
-    const posts = await apiFetch(`${API_BASE_URL}/feed`);
+    const posts = await apiFetch('/posts/feed');
 
     postContainer.innerHTML = "";
 

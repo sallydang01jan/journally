@@ -1,4 +1,3 @@
-// FILE: frontend/javascript/stories.js
 import { apiFetch, formatDate, getToken, escapeHTML, showAlert, handleApiError } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -88,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     formData.append('file', file);
 
     try {
-      const uploadData = await apiFetch('/media/upload', { method: 'POST', body: formData });
+      const uploadData = await apiFetch('/upload/media', { method: 'POST', body: formData });
       const mediaUrl = uploadData.url || uploadData.file?.url || uploadData.file?.filename;
 
       await apiFetch('/stories', { method: 'POST', body: { mediaUrl, type, caption: '' } });

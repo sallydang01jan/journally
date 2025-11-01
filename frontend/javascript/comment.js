@@ -1,5 +1,5 @@
 // frontend/javascript/comments.js
-import { API_BASE_URL, apiFetch, getToken, handleApiError, escapeHTML, showAlert, getUserData, formatDate } from "./utils.js";
+import { apiFetch, getToken, handleApiError, escapeHTML, showAlert, getUserData, formatDate } from "./utils.js";
 import { createCommentCard } from "./createComponents.js";
 
 /**
@@ -38,7 +38,7 @@ async function renderSingleComment(comment, container, prepend = false) {
 async function loadComments(postId, container) {
   if (!container) return;
   try {
-    const comments = await apiFetch(`${API_BASE_URL}/comments/post/${postId}`);
+    const comments = await apiFetch(`/comments/post/${postId}`);
     container.innerHTML = "";
     if (!Array.isArray(comments) || comments.length === 0) {
       container.innerHTML = `<p class="text-muted">Chưa có bình luận nào.</p>`;
@@ -66,7 +66,7 @@ async function addComment(postId, container, text) {
 
   try {
     const safeText = escapeHTML(text);
-    const newComment = await apiFetch(`${API_BASE_URL}/comments/${postId}`, {
+    const newComment = await apiFetch(`/comments/${postId}`, {
       method: "POST",
       body: { text: safeText }
     });
@@ -87,7 +87,7 @@ async function deleteComment(commentId, commentElement) {
   if (!confirm("Bạn có chắc muốn xóa bình luận này?")) return;
 
   try {
-    await apiFetch(`${API_BASE_URL}/comments/${commentId}`, { method: "DELETE" });
+    await apiFetch(`/comments/${commentId}`, { method: "DELETE" });
     commentElement.remove();
     showAlert("Đã xóa bình luận!", "success");
   } catch (err) {

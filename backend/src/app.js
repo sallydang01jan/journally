@@ -55,16 +55,16 @@ app.use("/api", apiLimiter);
 logger.info("Server starting...");
 console.log(helpers.formatDate(new Date()));
 
-app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
-app.use("/posts", postsRoutes);
-app.use("/comments", commentsRoutes);
-app.use("/upload", uploadRoutes);
-app.use("/notifications", notificationsRoutes);
-app.use("/stories", storyRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/posts", postsRoutes);
+app.use("/api/comments", commentsRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/api/notifications", notificationsRoutes);
+app.use("/api/stories", storyRoutes);
 
 // --- Google routes ---
-app.post("/auth/google", googleAuth);
-app.post("/auth/refresh", refreshAuth);
+app.post("/api/auth/google", googleAuth);
+app.post("/api/auth/refresh", refreshAuth);
 
 module.exports = app;

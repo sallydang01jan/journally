@@ -7,14 +7,13 @@ import {
   handleApiError,
   parseJwt,
   removeToken,
-  API_BASE_URL,
   showAlert,
 } from "./utils.js";
 import { createPostCard } from "./createComponents.js";
 import { initComments } from "./comments.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // Require auth & validate token
+  // ✅ Require auth & validate token
   requireAuth();
   const token = getToken();
   if (!token) return (window.location.href = "../html/auth.html");
@@ -33,9 +32,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Get query user id (or view self)
+  // ✅ Lấy user ID từ URL hoặc hiển thị hồ sơ của chính mình
   const userId = getUserIdFromURL();
-  // getUserData is async — await it
   const myData = await getUserData();
 
   if (!myData || !myData.id) {
@@ -55,18 +53,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   const endpoint = userId ? `/users/${userId}` : "/users/me";
 
   try {
-    const user = await apiFetch(`${API_BASE_URL}${endpoint}`);
+    const user = await apiFetch(endpoint);
 
-    // Display info
+    // 🧩 Hiển thị thông tin người dùng
     if (usernameEl) usernameEl.textContent = user.username || "Ẩn danh";
 
     if (profilePhoto) {
       let avatarUrl = "../assets/image/default-avatar.png";
       if (user.avatar) {
         const safeUrl = encodeURI(user.avatar);
-        avatarUrl = safeUrl.startsWith("http")
-          ? safeUrl
-          : `${API_BASE_URL}/${safeUrl}`;
+        avatarUrl = safeUrl.startsWith("http") ? safeUrl : safeUrl;
       }
       profilePhoto.style.backgroundImage = `url(${avatarUrl})`;
       profilePhoto.style.backgroundSize = "cover";
@@ -79,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       statsEls[2].textContent = `${user.following?.length || 0} đang theo dõi`;
     }
 
-    // follow logic
+    // 🤝 Logic follow / unfollow
     const viewedUserId = user._id || user.id;
     if (String(myData.id) === String(viewedUserId)) {
       if (followBtnWrapper) followBtnWrapper.style.display = "none";
@@ -88,14 +84,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         user.followers?.some((f) => f._id?.toString?.() === myData.id) ||
         user.followers?.includes(myData.id);
 
-      if (followBtn) followBtn.textContent = isFollowing ? "Đang theo dõi" : "Theo dõi";
+      if (followBtn)
+        followBtn.textContent = isFollowing ? "Đang theo dõi" : "Theo dõi";
 
       followBtnWrapper.onclick = async () => {
         try {
-          const data = await apiFetch(
-            `${API_BASE_URL}/users/${viewedUserId}/follow`,
-            { method: "POST" }
-          );
+          const data = await apiFetch(`/users/${viewedUserId}/follow`, {
+            method: "POST",
+          });
           if (data.message?.toLowerCase().includes("bỏ theo dõi")) {
             followBtn.textContent = "Theo dõi";
           } else {
@@ -108,31 +104,29 @@ document.addEventListener("DOMContentLoaded", async () => {
       };
     }
 
-    // render posts on profile
+    // 📝 Hiển thị danh sách bài viết của user
     renderPosts(user.posts || [], postsSection);
   } catch (err) {
     handleApiError(err, "Không thể tải trang hồ sơ");
   }
 
-  // header right avatar & link
+  // 👤 Avatar ở header
   const profileLink = document.getElementById("profile-link");
   const profileAvatar = document.getElementById("profile-avatar");
 
-  const myDataHeader = myData;
-  if (myDataHeader) {
+  if (myData) {
     let avatarUrl = "../assets/image/default-avatar.png";
-    if (myDataHeader.avatar) {
-      const safeUrl = encodeURI(myDataHeader.avatar);
-      avatarUrl = safeUrl.startsWith("http")
-        ? safeUrl
-        : `${API_BASE_URL}/${safeUrl}`;
+    if (myData.avatar) {
+      const safeUrl = encodeURI(myData.avatar);
+      avatarUrl = safeUrl.startsWith("http") ? safeUrl : safeUrl;
     }
     if (profileAvatar) profileAvatar.src = avatarUrl;
-    if (profileLink) profileLink.href = `../html/profile.html?user=${myDataHeader.id}`;
+    if (profileLink)
+      profileLink.href = `../html/profile.html?user=${myData.id}`;
   }
 });
 
-// helpers
+// Helpers
 function getUserIdFromURL() {
   const params = new URLSearchParams(window.location.search);
   return params.get("user");
@@ -155,7 +149,6 @@ function renderPosts(posts, section) {
     const card = createPostCard(p);
     if (!card) return;
 
-    // setup comments for each card
     const commentsContainer = card.querySelector(".comments-container");
     const commentForm = card.querySelector(".comment-input");
     const commentTextarea = card.querySelector("textarea");

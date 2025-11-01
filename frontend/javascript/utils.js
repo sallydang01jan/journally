@@ -1,5 +1,5 @@
 // FILE: frontend/javascript/utils.js
-export const API_BASE_URL = 'https://journally-backend.onrender.com';
+export const API_BASE_URL = 'https://journally-backend.onrender.com/api';
 
 export function getToken() {
   return localStorage.getItem('token');
