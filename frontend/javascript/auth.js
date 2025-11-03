@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (form) {
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const action = event.submitter?.value || "login";
+      const action = event.submitter?.value || "signin";
       const email = emailInput.value.trim();
       const password = passwordInput.value.trim();
 
