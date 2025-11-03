@@ -1,5 +1,5 @@
 // frontend/javascript/auth.js
-import { auth, provider, signInWithPopup, signOut } from "./firebase.js";
+import { auth, provider, signInWithPopup, signOut } from "../libs/firebase.js";
 import {
   API_BASE_URL,
   getToken,
@@ -62,25 +62,33 @@ document.addEventListener("DOMContentLoaded", async () => {
   const googleBtn = document.querySelector(".sign-in-with-google");
 
   if (form) {
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const action = event.submitter?.value || "signin";
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
+  // 🔒 Chặn form gửi đi theo kiểu mặc định (GET → lộ email/password)
+  form.setAttribute("action", "javascript:void(0);");
+  form.setAttribute("method", "post");
 
-      if (!email || !password)
-        return showAlert("Vui lòng nhập đầy đủ email và mật khẩu.", "error");
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-      if (!email.includes("@")) return showAlert("Email không hợp lệ.", "error");
+    // ✅ Đổi signin → login để thống nhất với button
+    const action = event.submitter?.value || "signin";
 
-      if (password.length < 6)
-        return showAlert("Mật khẩu phải dài ít nhất 6 ký tự.", "error");
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
 
-      toggleSpinner(true);
-      await submitAuth(action, email, password);
-      toggleSpinner(false);
-    });
-  }
+    if (!email || !password)
+      return showAlert("Vui lòng nhập đầy đủ email và mật khẩu.", "error");
+
+    if (!email.includes("@")) return showAlert("Email không hợp lệ.", "error");
+
+    if (password.length < 6)
+      return showAlert("Mật khẩu phải dài ít nhất 6 ký tự.", "error");
+
+    toggleSpinner(true);
+    await submitAuth(action, email, password);
+    toggleSpinner(false);
+  });
+}
+
 
   // SUBMIT
   async function submitAuth(action, email, password) {
