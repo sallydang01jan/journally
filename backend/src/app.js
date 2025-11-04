@@ -19,9 +19,6 @@ app.use(
 );
 app.use(express.json());
 
-// ✅ Thêm dòng này ngay tại đây
-app.set('trust proxy', 1); // <-- Fix lỗi X-Forwarded-For (Render proxy)
-
 // --- Firebase Admin (an toàn, không file JSON) ---
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
