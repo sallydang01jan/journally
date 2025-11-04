@@ -1,14 +1,23 @@
-// config/firebase.js
-const admin = require(firebase-admin);
-const {firebaseKeyPath} = require("./index");
+import admin from "firebase-admin";
+import dotenv from "dotenv";
 
-let firebaseApp;
+dotenv.config();
 
-if (firebaseKeyPath) {
-    const serviceAccount = require(firebaseKeyPath);
-    firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-    });
+if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
+  throw new Error("FIREBASE_SERVICE_ACCOUNT not defined in environment variables");
 }
 
-module.exports = firebaseApp ? admin : null;
+// Parse JSON
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+
+// ✨ Replace literal "\\n" với actual newline "\n"
+serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
+
+// Initialize Firebase
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
+
+export default admin;

@@ -1,7 +1,6 @@
 // app.js
 const express = require("express");
 const app = express();
-const admin = require("firebase-admin");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
@@ -19,13 +18,6 @@ app.use(
 );
 app.use(express.json());
 
-// --- Firebase Admin (an toàn, không file JSON) ---
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-
 // --- Routes & middlewares ---
 const errorHandler = require("./middlewares/error.middleware.js");
 const logger = require("./utils/logger.js");
@@ -40,8 +32,7 @@ const uploadRoutes = require("./routes/upload.routes.js");
 const notificationsRoutes = require("./routes/notifications.routes.js");
 const storyRoutes = require("./routes/stories.routes.js");
 
-// ✅ Google auth (CommonJS)
-const { googleAuth, refreshAuth } = require("./routes/auth/google.js");
+const googleAuthRouter = require("./routes/auth/google.js").default;
 
 // --- Health check ---
 app.get("/health", (_req, res) => {
@@ -56,6 +47,7 @@ logger.info("Server starting...");
 console.log(helpers.formatDate(new Date()));
 
 app.use("/api/auth", authRoutes);
+app.use("/api/auth", googleAuthRouter);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/comments", commentsRoutes);
@@ -64,7 +56,5 @@ app.use("/api/notifications", notificationsRoutes);
 app.use("/api/stories", storyRoutes);
 
 // --- Google routes ---
-app.post("/api/auth/google", googleAuth);
-app.post("/api/auth/refresh", refreshAuth);
 
 module.exports = app;
