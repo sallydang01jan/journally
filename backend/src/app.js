@@ -19,6 +19,9 @@ app.use(
 );
 app.use(express.json());
 
+// ✅ Thêm dòng này ngay tại đây
+app.set('trust proxy', 1); // <-- Fix lỗi X-Forwarded-For (Render proxy)
+
 // --- Firebase Admin (an toàn, không file JSON) ---
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
@@ -50,7 +53,7 @@ app.get("/health", (_req, res) => {
 
 // --- Apply middlewares & routes ---
 app.use(errorHandler);
-app.use("/api", apiLimiter);
+app.use("/api", apiLimiter); // <--- dòng này giữ nguyên
 
 logger.info("Server starting...");
 console.log(helpers.formatDate(new Date()));
