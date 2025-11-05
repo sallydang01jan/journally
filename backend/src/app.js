@@ -4,6 +4,7 @@ const app = express();
 const dotenv = require("dotenv");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const path = require("path");
 
 // ✅ Nạp biến môi trường
 dotenv.config();
@@ -18,6 +19,9 @@ app.use(
 );
 app.use(express.json());
 
+// Serve folder uploads
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 // --- Routes & middlewares ---
 const errorHandler = require("./middlewares/error.middleware.js");
 const logger = require("./utils/logger.js");
@@ -31,6 +35,7 @@ const commentsRoutes = require("./routes/comments.routes.js");
 const uploadRoutes = require("./routes/upload.routes.js");
 const notificationsRoutes = require("./routes/notifications.routes.js");
 const storyRoutes = require("./routes/stories.routes.js");
+const mediaRoutes = require("./routes/media.routes");
 
 const googleAuthRouter = require("./routes/auth/google.js").default;
 
@@ -54,6 +59,7 @@ app.use("/api/comments", commentsRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/notifications", notificationsRoutes);
 app.use("/api/stories", storyRoutes);
+app.use("/api/media", mediaRoutes);
 
 // --- Google routes ---
 

@@ -14,11 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const token = getToken();
   if (!token) return redirectToAuth();
-
-  if (isTokenExpired(token)) {
-    handleExpiredToken();
-    return;
-  }
+  if (isTokenExpired(token)) return handleExpiredToken();
 
   const form = document.getElementById("create-post-form");
   const contentInput = document.getElementById("post-input");
@@ -42,8 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    messageBox.textContent = "";
-    messageBox.className = "";
+    resetMessageBox();
 
     const content = contentInput.value.trim();
     if (!content && !selectedFiles.length) {
@@ -60,8 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
         postContainer.prepend(postCard);
       }
 
-      resetForm(contentInput, previewBox);
-      selectedFiles = [];
+      resetForm();
     } catch (err) {
       console.error("Lỗi khi đăng bài:", err);
       if (err.status === 401 || /token/i.test(err.message)) {
@@ -74,10 +68,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function handleSelectedFiles(files) {
     const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+
     files.forEach((file) => {
+      // check duplicate
+      if (selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+        return showAlert(`⚠️ File ${file.name} đã được chọn.`, "warning");
+      }
+
       if (!["image", "video", "audio"].some((t) => file.type.startsWith(t))) {
         return showAlert(`❌ File ${file.name} không hợp lệ.`, "error");
       }
+
       if (file.size > MAX_SIZE) {
         return showAlert(`❌ File ${file.name} quá lớn (>10MB).`, "error");
       }
@@ -89,6 +90,18 @@ document.addEventListener("DOMContentLoaded", () => {
         })
       );
     });
+  }
+
+  function resetForm() {
+    contentInput.value = "";
+    previewBox.innerHTML = "";
+    selectedFiles = [];
+    resetMessageBox();
+  }
+
+  function resetMessageBox() {
+    messageBox.textContent = "";
+    messageBox.className = "";
   }
 });
 
@@ -189,19 +202,26 @@ async function createPost(content, files) {
   if (!token) throw new Error("Vui lòng đăng nhập trước khi đăng bài.");
 
   const mediaUrls = [];
+
   for (const file of files) {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await apiFetch("/upload/media", {
-      method: "POST",
-      body: formData,
-      skipJson: true,
-    });
+    try {
+      const res = await apiFetch("/upload/media", {
+        method: "POST",
+        body: formData,
+        skipJson: true,
+      });
 
-    if (!res || res.status === 401) throw { status: 401, message: "Token expired" };
-    const data = await res.json?.() || res;
-    mediaUrls.push(data.url || data.file?.url || data.file?.filename);
+      if (!res || res.status === 401) throw { status: 401, message: "Token expired" };
+      const data = await res.json?.() || res;
+      mediaUrls.push(data.url || data.file?.url || data.file?.filename);
+    } catch (err) {
+      console.error(`❌ Lỗi upload file ${file.name}:`, err);
+      showAlert(`❌ Lỗi upload file ${file.name}`, "error");
+      // optional: continue với các file còn lại
+    }
   }
 
   const payload = {
@@ -211,9 +231,4 @@ async function createPost(content, files) {
 
   const created = await apiFetch("/posts", { method: "POST", body: payload });
   return created.post || created;
-}
-
-function resetForm(input, previewBox) {
-  input.value = "";
-  previewBox.innerHTML = "";
 }

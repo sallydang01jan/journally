@@ -11,7 +11,7 @@ exports.googleLogin = async (req, res) => {
     const { token } = req.body;
     if (!token) return res.status(400).json({ message: "Thiếu token Google" });
 
-    // Xác minh token từ Google / Firebase
+    // ✅ Xác minh token từ Google
     const ticket = await client.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -19,7 +19,7 @@ exports.googleLogin = async (req, res) => {
     const payload = ticket.getPayload();
     const { email, name, picture, sub } = payload;
 
-    // Tìm hoặc tạo người dùng
+    // ✅ Tìm hoặc tạo người dùng
     let user = await User.findOne({ email });
     if (!user) {
       user = await User.create({
@@ -31,21 +31,37 @@ exports.googleLogin = async (req, res) => {
       });
     }
 
-    // Tạo JWT của hệ thống
-    const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-  expiresIn: "1d",
-});
+    // 🔐 Access Token
+    const jwtToken = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m", issuer: "myapp", audience: "myapp-frontend" }
+    );
+
+    // 🔄 Refresh Token
+    const refreshToken = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: "7d", issuer: "myapp" }
+    );
 
     res.json({
       message: "Đăng nhập Google thành công",
       token: jwtToken,
-      user: { userId: user._id, email: user.email, name: user.username },
+      refreshToken,
+      user: {
+        userId: user._id,
+        email: user.email,
+        name: user.username,
+        avatar: user.avatar,
+      },
     });
   } catch (err) {
     console.error("Google login error:", err);
     res.status(500).json({ message: "Lỗi khi xác thực Google" });
   }
 };
+
 
 exports.register = async (req, res) => {
   try {
@@ -72,20 +88,50 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Sai email hoặc mật khẩu" });
+    if (!user)
+      return res.status(400).json({ message: "Sai email hoặc mật khẩu" });
 
     const isMatch = await bcrypt.compare(password, user.passwordHash);
-    if (!isMatch) return res.status(400).json({ message: "Sai email hoặc mật khẩu" });
+    if (!isMatch)
+      return res.status(400).json({ message: "Sai email hoặc mật khẩu" });
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
+    // 🔐 Access Token — hiệu lực ngắn
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "15m", // nên dùng ngắn hạn để bảo mật hơn
+        issuer: "myapp",
+        audience: "myapp-frontend",
+      }
+    );
+
+    // 🔄 Refresh Token — hiệu lực dài
+    const refreshToken = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_REFRESH_SECRET,
+      {
+        expiresIn: "7d",
+        issuer: "myapp",
+      }
+    );
+
+    res.json({
+      message: "Đăng nhập thành công",
+      token,
+      refreshToken,
+      user: {
+        userId: user._id,
+        email: user.email,
+        name: user.username,
+      },
     });
-
-    res.json({ message: "Đăng nhập thành công", token });
   } catch (err) {
+    console.error("Login error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 exports.me = async (req, res) => {
   try {
@@ -99,5 +145,29 @@ exports.me = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(400).json({ message: "Thiếu refreshToken" });
+
+    // ✅ Xác minh refreshToken
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const user = await User.findById(decoded.userId);
+    if (!user) return res.status(404).json({ message: "Không tìm thấy người dùng" });
+
+    // 🔁 Cấp token mới
+    const newToken = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m", issuer: "myapp", audience: "myapp-frontend" }
+    );
+
+    res.json({ token: newToken });
+  } catch (err) {
+    console.error("Refresh token error:", err);
+    res.status(401).json({ message: "Refresh token không hợp lệ hoặc đã hết hạn" });
   }
 };

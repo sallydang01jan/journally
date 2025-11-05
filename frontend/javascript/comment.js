@@ -38,7 +38,7 @@ async function renderSingleComment(comment, container, prepend = false) {
 async function loadComments(postId, container) {
   if (!container) return;
   try {
-    const comments = await apiFetch(`/comments/post/${postId}`);
+    const comments = await apiFetch(`/comments/${postId}`);
     container.innerHTML = "";
     if (!Array.isArray(comments) || comments.length === 0) {
       container.innerHTML = `<p class="text-muted">Chưa có bình luận nào.</p>`;

@@ -2,20 +2,33 @@ const { createNotification } = require("../services/notification.service");
 const Post = require("../models/Post");
 const Comment = require("../models/Comment");
 
-// Tạo bài đăng
+// ==================== Tạo bài post ====================
 exports.createPost = async (req, res) => {
   try {
-    const { content } = req.body;
+    const { content, media } = req.body;
     const newPost = new Post({ content, author: req.user.id });
 
+    // 🔹 Nếu có file upload trực tiếp
     if (req.files && req.files.length > 0) {
-      req.files.forEach(file => {
+      req.files.forEach((file) => {
         const mime = file.mimetype;
         if (mime.startsWith("image/")) newPost.images.push(file.path);
         else if (mime.startsWith("video/")) newPost.videos.push(file.path);
         else if (mime.startsWith("audio/")) {
-          if (!newPost.audio) newPost.audio = []; // khởi tạo mảng nếu chưa có
+          if (!newPost.audio) newPost.audio = [];
           newPost.audio.push(file.path);
+        }
+      });
+    }
+
+    // 🔹 Nếu frontend gửi mảng media URLs (ảnh/video/audio đã upload trước đó)
+    if (media && Array.isArray(media)) {
+      media.forEach((url) => {
+        if (url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) newPost.images.push(url);
+        else if (url.match(/\.(mp4|mov|avi|mkv)$/i)) newPost.videos.push(url);
+        else if (url.match(/\.(mp3|wav|ogg)$/i)) {
+          if (!newPost.audio) newPost.audio = [];
+          newPost.audio.push(url);
         }
       });
     }
@@ -24,12 +37,13 @@ exports.createPost = async (req, res) => {
     res.status(201).json({ post: newPost });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Lỗi khi tạo bài đăng", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Lỗi khi tạo bài đăng", error: err.message });
   }
 };
 
-
-// Lấy feed
+// ==================== Lấy feed ====================
 exports.getFeed = async (req, res) => {
   try {
     const posts = await Post.find()
@@ -41,7 +55,7 @@ exports.getFeed = async (req, res) => {
   }
 };
 
-// Like / Unlike post
+// ==================== Like / Unlike post ====================
 exports.toggleLike = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -64,6 +78,7 @@ exports.toggleLike = async (req, res) => {
   }
 };
 
+// ==================== Comment post ====================
 exports.commentPost = async (req, res) => {
   try {
     const me = req.user;
