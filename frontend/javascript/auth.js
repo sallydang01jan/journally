@@ -2,7 +2,6 @@
 import { auth, provider, signInWithPopup, signOut } from "../libs/firebase.js";
 import {
   API_BASE_URL,
-  getToken,
   getValidToken,
   setToken,
   removeToken,
