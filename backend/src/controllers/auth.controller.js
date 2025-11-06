@@ -5,21 +5,20 @@ const { OAuth2Client } = require("google-auth-library");
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// 🟢 Đăng nhập qua Google
+// 🟢 Google Login
 exports.googleLogin = async (req, res) => {
   try {
     const { token } = req.body;
     if (!token) return res.status(400).json({ message: "Thiếu token Google" });
 
-    // ✅ Xác minh token từ Google
     const ticket = await client.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
+
     const payload = ticket.getPayload();
     const { email, name, picture, sub } = payload;
 
-    // ✅ Tìm hoặc tạo người dùng
     let user = await User.findOne({ email });
     if (!user) {
       user = await User.create({
@@ -31,14 +30,12 @@ exports.googleLogin = async (req, res) => {
       });
     }
 
-    // 🔐 Access Token
-    const jwtToken = jwt.sign(
+    const accessToken = jwt.sign(
       { userId: user._id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "15m", issuer: "myapp", audience: "myapp-frontend" }
     );
 
-    // 🔄 Refresh Token
     const refreshToken = jwt.sign(
       { userId: user._id, email: user.email },
       process.env.JWT_REFRESH_SECRET,
@@ -47,12 +44,12 @@ exports.googleLogin = async (req, res) => {
 
     res.json({
       message: "Đăng nhập Google thành công",
-      token: jwtToken,
+      token: accessToken,
       refreshToken,
       user: {
-        userId: user._id,
+        id: user._id,
         email: user.email,
-        name: user.username,
+        username: user.username,
         avatar: user.avatar,
       },
     });
@@ -62,17 +59,13 @@ exports.googleLogin = async (req, res) => {
   }
 };
 
-
+// 🟠 Đăng ký
 exports.register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      username,
-      email,
-      passwordHash: hashedPassword,
-    });
+    const user = await User.create({ username, email, passwordHash: hashedPassword });
 
     res.status(201).json({ message: "Đăng ký thành công", userId: user._id });
   } catch (err) {
@@ -83,10 +76,10 @@ exports.register = async (req, res) => {
   }
 };
 
+// 🟣 Đăng nhập thường
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const user = await User.findOne({ email });
     if (!user)
       return res.status(400).json({ message: "Sai email hoặc mật khẩu" });
@@ -95,35 +88,26 @@ exports.login = async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "Sai email hoặc mật khẩu" });
 
-    // 🔐 Access Token — hiệu lực ngắn
-    const token = jwt.sign(
-      { userId: user._id },
+    const accessToken = jwt.sign(
+      { userId: user._id, email: user.email },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "15m", // nên dùng ngắn hạn để bảo mật hơn
-        issuer: "myapp",
-        audience: "myapp-frontend",
-      }
+      { expiresIn: "15m", issuer: "myapp", audience: "myapp-frontend" }
     );
 
-    // 🔄 Refresh Token — hiệu lực dài
     const refreshToken = jwt.sign(
-      { userId: user._id },
+      { userId: user._id, email: user.email },
       process.env.JWT_REFRESH_SECRET,
-      {
-        expiresIn: "7d",
-        issuer: "myapp",
-      }
+      { expiresIn: "7d", issuer: "myapp" }
     );
 
     res.json({
       message: "Đăng nhập thành công",
-      token,
+      token: accessToken,
       refreshToken,
       user: {
-        userId: user._id,
+        id: user._id,
         email: user.email,
-        name: user.username,
+        username: user.username,
       },
     });
   } catch (err) {
@@ -132,33 +116,30 @@ exports.login = async (req, res) => {
   }
 };
 
-
+// 🔵 Lấy thông tin chính mình
 exports.me = async (req, res) => {
   try {
     if (!req.user)
       return res.status(401).json({ message: "Chưa đăng nhập" });
 
-    // Nếu middleware verifyToken đã gán user vào req.user
-    res.json({
-      message: "Token hợp lệ",
-      user: req.user,
-    });
+    res.json({ message: "Token hợp lệ", user: req.user });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 };
 
+// 🔄 Refresh Token
 exports.refreshToken = async (req, res) => {
   try {
     const { refreshToken } = req.body;
-    if (!refreshToken) return res.status(400).json({ message: "Thiếu refreshToken" });
+    if (!refreshToken)
+      return res.status(400).json({ message: "Thiếu refreshToken" });
 
-    // ✅ Xác minh refreshToken
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
     const user = await User.findById(decoded.userId);
-    if (!user) return res.status(404).json({ message: "Không tìm thấy người dùng" });
+    if (!user)
+      return res.status(404).json({ message: "Không tìm thấy người dùng" });
 
-    // 🔁 Cấp token mới
     const newToken = jwt.sign(
       { userId: user._id, email: user.email },
       process.env.JWT_SECRET,

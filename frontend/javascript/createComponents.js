@@ -158,10 +158,7 @@ export function createNotificationCard(notification = {}) {
     <div class="notification-text"><p class="text-wrapper">${message}</p><small class="text-muted">${time}</small></div>
     <button class="mark-as-read-button"><span>Đánh dấu đã đọc</span></button>
   `;
-
-  article.querySelector('.close-button').addEventListener('click', () => article.remove());
-  article.querySelector('.mark-as-read-button').addEventListener('click', () => article.classList.add('read'));
-
+  
   return article;
 }
 

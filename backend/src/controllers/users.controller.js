@@ -1,20 +1,35 @@
 const User = require("../models/User.js");
 const Post = require("../models/Post");
 const { createNotification } = require("../services/notification.service");
+const mongoose = require("mongoose");
 
 // ===== LẤY PROFILE =====
 exports.getProfile = async (req, res, next) => {
   try {
-    const targetId = req.params.id || req.user.id;
-    const requesterId = req.user.id;
+    const targetParam = req.params.id || req.user.id; // lấy param hoặc id của user đang đăng nhập
 
-    const user = await User.findById(targetId)
-      .select("-passwordHash")
-      .populate("followers", "username email avatar")
-      .populate("following", "username email avatar")
-      .lean();
+    let user;
+    // ✅ Cho phép tìm bằng _id hoặc username
+    if (mongoose.Types.ObjectId.isValid(targetParam)) {
+      user = await User.findById(targetParam)
+        .select("-passwordHash")
+        .populate("followers", "username email avatar")
+        .populate("following", "username email avatar")
+        .lean();
+    } else {
+      user = await User.findOne({ username: targetParam })
+        .select("-passwordHash")
+        .populate("followers", "username email avatar")
+        .populate("following", "username email avatar")
+        .lean();
+    }
 
-    if (!user) return res.status(404).json({ message: "User không tồn tại" });
+    if (!user) {
+      return res.status(404).json({ message: "User không tồn tại" });
+    }
+
+    // ✅ Thêm trường `id` để frontend đọc được (chuẩn RESTful)
+    user.id = user._id;
 
     const posts = await Post.find({ author: user._id })
       .populate("author", "username avatar")
@@ -30,6 +45,7 @@ exports.getProfile = async (req, res, next) => {
     next(err);
   }
 };
+
 
 // ===== CẬP NHẬT PROFILE =====
 exports.updateProfile = async (req, res, next) => {

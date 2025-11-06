@@ -107,6 +107,8 @@ body{
   height: 4vw;
   cursor: pointer;
   transition: transform 0.2s ease;
+  background-color: #fff;
+  border: none;
 }
 
 .create-post .items:hover,
@@ -160,7 +162,7 @@ body{
 
 /* Vùng drop */
 .drop-zone {
-  border: 2px dashed #ccc;
+  border: 2px dashed #fff;
   padding: 20px;
   text-align: center;
   margin-bottom: 10px;

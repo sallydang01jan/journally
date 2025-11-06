@@ -3,12 +3,12 @@ const router = express.Router();
 const Notification = require("../models/Notification");
 const auth = require("../middlewares/auth.middleware");
 
-// Lấy tất cả notifications của user hiện tại
+// 📬 Lấy tất cả thông báo của user hiện tại
 router.get("/", auth, async (req, res) => {
   try {
     const notifications = await Notification.find({ user: req.user.id })
       .sort({ createdAt: -1 })
-      .populate("user", "username avatar"); // Lấy thêm username và avatar
+      .populate("user", "username avatar"); // Lấy thêm thông tin người gửi
     res.json(notifications);
   } catch (err) {
     console.error("Error fetching notifications:", err);
@@ -16,27 +16,28 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-// Đánh dấu đã đọc
+// ✅ Đánh dấu đã đọc
 router.put("/:id/read", auth, async (req, res) => {
   try {
-    const noti = await Notification.findOneAndUpdate(
+    await Notification.findOneAndUpdate(
       { _id: req.params.id, user: req.user.id },
-      { isRead: true },
-      { new: true }
+      { isRead: true }
     );
-    res.json(noti);
+    res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Error marking notification as read:", err);
+    res.status(500).json({ error: "Không thể đánh dấu đã đọc" });
   }
 });
 
-// Xoá noti
+// 🗑️ Xoá thông báo
 router.delete("/:id", auth, async (req, res) => {
   try {
     await Notification.deleteOne({ _id: req.params.id, user: req.user.id });
-    res.json({ message: "Đã xoá" });
+    res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Error deleting notification:", err);
+    res.status(500).json({ error: "Không thể xoá thông báo" });
   }
 });
 
