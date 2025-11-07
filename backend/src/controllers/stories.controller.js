@@ -1,3 +1,4 @@
+// controllers/stories.controller.js
 const Story = require("../models/Story");
 
 exports.createStory = async (req, res) => {

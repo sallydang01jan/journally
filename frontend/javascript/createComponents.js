@@ -1,4 +1,4 @@
-// FILE: frontend/javascript/createComponents.js
+// frontend/javascript/createComponents.js
 import { loadAllComponents } from './components.js';
 import { API_BASE_URL, apiFetch, getToken, escapeHTML, showAlert } from './utils.js';
 

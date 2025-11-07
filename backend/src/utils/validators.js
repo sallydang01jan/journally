@@ -1,3 +1,4 @@
+// utils/validators.js
 const Joi = require("joi");
 
 // Schema cho register

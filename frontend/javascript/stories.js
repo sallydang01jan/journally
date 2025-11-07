@@ -1,3 +1,4 @@
+// frontend/javascript/stories.js
 import { apiFetch, formatDate, getToken, escapeHTML, showAlert, handleApiError } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {

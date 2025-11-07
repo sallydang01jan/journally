@@ -1,3 +1,4 @@
+// controllers/posts.controller.js
 const { createNotification } = require("../services/notification.service");
 const Post = require("../models/Post");
 const Comment = require("../models/Comment");

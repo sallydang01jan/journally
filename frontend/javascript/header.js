@@ -1,4 +1,4 @@
-// FILE: frontend/javascript/header.js
+// frontend/javascript/header.js
 import { auth, signOut } from "../libs/firebase.js";
 import { getValidToken, getUserData, removeToken } from "./utils.js";
 

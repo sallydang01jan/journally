@@ -1,3 +1,4 @@
+// frontend/javascript/create-post.js
 import {
   getToken,
   escapeHTML,

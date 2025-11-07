@@ -1,3 +1,4 @@
+// routes/auth/google.js
 import express from "express";
 import admin from "../../config/firebase.js"; // import admin đã init
 import jwt from "jsonwebtoken";

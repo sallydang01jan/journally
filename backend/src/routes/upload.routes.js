@@ -1,4 +1,4 @@
-// backend/routes/upload.routes.js
+// routes/upload.routes.js
 const express = require("express");
 const router = express.Router();
 const upload = require("../middlewares/upload.middleware");

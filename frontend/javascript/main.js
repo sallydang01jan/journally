@@ -1,5 +1,4 @@
-
-// FILE: frontend/javascript/main.js
+// frontend/javascript/main.js
 import { loadAllComponents } from './components.js';
 import { API_BASE_URL, apiFetch, getToken, isAuthenticated, getUserData, handleApiError, escapeHTML, showAlert } from './utils.js';
 import { createPostCard } from './createComponents.js';

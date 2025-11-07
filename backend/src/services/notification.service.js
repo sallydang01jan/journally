@@ -1,3 +1,4 @@
+// services/notification.service.js
 const Notification = require("../models/Notification");
 
 const createNotification = async (userId, type, message) => {

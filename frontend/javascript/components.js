@@ -1,4 +1,4 @@
-// FILE: frontend/javascript/components.js
+// frontend/javascript/components.js
 export async function loadComponent(id, path) {
   try {
     const res = await fetch(path);

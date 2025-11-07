@@ -1,3 +1,4 @@
+// controllers/users.controller.js
 const User = require("../models/User.js");
 const Post = require("../models/Post");
 const { createNotification } = require("../services/notification.service");

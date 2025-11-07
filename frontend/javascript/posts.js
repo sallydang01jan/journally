@@ -1,3 +1,4 @@
+// frontend/javascript/posts.js
 import {
   apiFetch,
   getToken,

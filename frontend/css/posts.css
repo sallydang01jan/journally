@@ -1,9 +1,11 @@
+/* Font */
 @font-face {
   font-family: 'BHN Editorial New Ultra light';
   src: url('../assets/fonts/BHN Editorial New Ultra Light.ttf');
 }
 
 body {
+  font-family: "BHN Editorial New Ultra light";
   background: repeating-linear-gradient(
   90deg,
   #c6eafa,

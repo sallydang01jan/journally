@@ -1,3 +1,4 @@
+// models/Story.js
 const mongoose = require("mongoose");
 
 const StorySchema = new mongoose.Schema({

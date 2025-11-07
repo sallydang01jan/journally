@@ -1,3 +1,4 @@
+// frontend/javascript/upload.js
 import { apiFetch, showAlert, requireAuth, getValidToken } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', async () => {

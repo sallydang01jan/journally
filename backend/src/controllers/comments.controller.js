@@ -1,3 +1,4 @@
+// controllers/comments.controller.js
 const Comment = require("../models/Comment");
 const Post = require("../models/Post");
 
