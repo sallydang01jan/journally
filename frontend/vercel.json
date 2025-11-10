@@ -6,7 +6,7 @@
     { "source": "/about-us", "destination": "/html/about-us.html" },
     { "source": "/auth", "destination": "/html/auth.html" },
     { "source": "/create-post", "destination": "/html/create-post.html" },
-    { "source": "/notification-center", "destination": "/html/notification-center.html" },
+    { "source": "/notifications", "destination": "/html/notification-center.html" },
     { "source": "/posts", "destination": "/html/posts.html" },
     { "source": "/profile", "destination": "/html/profile.html" }
   ]
