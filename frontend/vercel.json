@@ -1,5 +1,5 @@
 {
-  "cleanUrls": true,
+  "cleanUrls": false,
   "trailingSlash": false,
   "rewrites": [
     { "source": "/", "destination": "/html/index.html" },
@@ -11,4 +11,3 @@
     { "source": "/profile", "destination": "/html/profile.html" }
   ]
 }
-
