@@ -1,5 +1,4 @@
 {
-  "hosting": {
     "public": "public",
     "cleanUrls": true,
     "trailingSlash": false,
@@ -12,6 +11,5 @@
       { "source": "/posts", "destination": "/html/posts.html" },
       { "source": "/profile", "destination": "/html/profile.html" }
     ]
-  }
 }
 
