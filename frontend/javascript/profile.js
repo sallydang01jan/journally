@@ -107,24 +107,24 @@ function displayUserInfo(user, usernameEl, statsEls, profilePhoto) {
 
 function setupFollowButton(user, myId, followBtnWrapper, followBtn) {
   const viewedUserId = user._id || user.id;
+
   if (String(myId) === String(viewedUserId)) {
     if (followBtnWrapper) followBtnWrapper.style.display = "none";
     return;
   }
 
-  const isFollowing =
-    user.followers?.some((f) => f._id?.toString?.() === myId) ||
-    user.followers?.includes(myId);
-
+  let isFollowing = user.followers?.some(f => f._id?.toString?.() === myId) || user.followers?.includes(myId);
   if (followBtn) followBtn.textContent = isFollowing ? "Đang theo dõi" : "Theo dõi";
 
   if (followBtnWrapper) {
     followBtnWrapper.onclick = async () => {
       try {
         const data = await apiFetch(`/users/${viewedUserId}/follow`, { method: "POST" });
-        followBtn.textContent = data.message?.toLowerCase().includes("bỏ theo dõi")
-          ? "Theo dõi"
-          : "Đang theo dõi";
+        
+        // Cập nhật trạng thái dựa vào isFollowing từ backend
+        isFollowing = data.isFollowing;
+        if (followBtn) followBtn.textContent = isFollowing ? "Đang theo dõi" : "Theo dõi";
+
         showAlert(data.message, "info");
       } catch (err) {
         handleApiError(err);
@@ -132,6 +132,7 @@ function setupFollowButton(user, myId, followBtnWrapper, followBtn) {
     };
   }
 }
+
 
 function renderPosts(posts, section) {
   if (!section) return;

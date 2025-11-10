@@ -7,7 +7,10 @@ const Comment = require("../models/Comment");
 exports.createPost = async (req, res) => {
   try {
     const { content, media } = req.body;
-    const newPost = new Post({ content, author: req.user.id });
+    const newPost = new Post({
+      content: content || "",
+      author: req.user.id,
+    });
 
     // 🔹 Nếu có file upload trực tiếp
     if (req.files && req.files.length > 0) {

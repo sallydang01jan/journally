@@ -15,6 +15,12 @@ router.post(
   postController.createPost
 );
 
+
+router.post("/media", auth, upload.single("file"), (req, res) => {
+  if (!req.file) return res.status(400).json({ message: "Không có file" });
+  res.json({ url: `/uploads/${req.file.filename}` }); // hoặc file.path nếu dùng path đầy đủ
+});
+
 router.get("/feed", auth, postController.getFeed);
 
 router.post("/:id/like", auth, postController.toggleLike);
