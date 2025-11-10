@@ -1,5 +1,5 @@
 {
-  "cleanUrls": false,
+  "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
     { "source": "/", "destination": "/html/index.html" },
@@ -9,13 +9,5 @@
     { "source": "/notifications", "destination": "/html/notification-center.html" },
     { "source": "/posts", "destination": "/html/posts.html" },
     { "source": "/profile", "destination": "/html/profile.html" }
-  ],
-  "redirects": [
-    { "source": "/auth.html", "destination": "/auth", "type": 301 },
-    { "source": "/about-us.html", "destination": "/about-us", "type": 301 },
-    { "source": "/create-post.html", "destination": "/create-post", "type": 301 },
-    { "source": "/notifications.html", "destination": "/notifications", "type": 301 },
-    { "source": "/posts.html", "destination": "/posts", "type": 301 },
-    { "source": "/profile.html", "destination": "/profile", "type": 301 }
   ]
 }
