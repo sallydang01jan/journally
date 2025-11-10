@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>tạo bài viết - Journally</title>
+  <title>Tạo bài viết - Journally</title>
 
   <!-- CSS -->
   <link rel="stylesheet" href="../css/components.css">
@@ -31,8 +31,9 @@
   <header>
     <div id="header-container"></div>
   </header>
-  
-  <main class="create-post" id="create-post-form">
+
+  <!-- Form tạo bài viết -->
+  <form class="create-post" id="create-post-form" enctype="multipart/form-data">
     <section class="footer" role="main" aria-label="Khu vực tạo bài viết">
       <div class="component"></div>
 
@@ -70,60 +71,34 @@
 
       <h1 class="text-wrapper-2">Tạo bài viết</h1>
     </section>
-    
-    <!-- Navigation -->
-    <nav class="menu" aria-label="Main navigation">
-      <a href="index.html">
-        <button class="home-button" aria-label="Home">
-          <img src="../assets/image/home button.png" alt="Home">
-        </button>
-      </a>
+  </form>
 
-      <a id="profile-link">
-        <button class="profile" aria-label="Profile">
-          <img class="ellipse-3" id="profile-avatar" src="../assets/image/profile.png" alt="Profile">
-        </button>
-      </a>
+  <!-- Navigation -->
+  <nav class="menu" aria-label="Main navigation">
+    <a href="index.html">
+      <button class="home-button" aria-label="Home">
+        <img src="../assets/image/home button.png" alt="Home">
+      </button>
+    </a>
 
-      <a href="notification-center.html">
-        <button class="notification-button" aria-label="Notifications">
-          <img class="star" src="../assets/image/notification.png" alt="Notification">
-        </button>
-      </a>
+    <a id="profile-link">
+      <button class="profile" aria-label="Profile">
+        <img class="ellipse-3" id="profile-avatar" src="../assets/image/profile.png" alt="Profile">
+      </button>
+    </a>
 
-      <a href="create-post.html">
-        <button class="create-post" aria-label="Create new post">
-          <img class="plus-2" src="../assets/image/create post.png" alt="Create">
-        </button>
-      </a>
-    </nav>
-  </main>
+    <a href="notification-center.html">
+      <button class="notification-button" aria-label="Notifications">
+        <img class="star" src="../assets/image/notification.png" alt="Notification">
+      </button>
+    </a>
 
-  <!-- Chatbase -->
-  <script>
-    (function(){
-      if(!window.chatbase || window.chatbase("getState")!=="initialized"){
-        window.chatbase=(...args)=>{
-          if(!window.chatbase.q){window.chatbase.q=[]}
-          window.chatbase.q.push(args)
-        };
-        window.chatbase=new Proxy(window.chatbase,{
-          get(target,prop){
-            if(prop==="q"){return target.q}
-            return(...args)=>target(prop,...args)
-          }
-        })
-      }
-      const onLoad=function(){
-        const script=document.createElement("script");
-        script.src="https://www.chatbase.co/embed.min.js";
-        script.id="huIxgDhBOP2APxWQ5ynYV";
-        script.domain="www.chatbase.co";
-        document.body.appendChild(script)
-      };
-      if(document.readyState==="complete"){onLoad()}
-      else{window.addEventListener("load",onLoad)}
-    })();
-  </script>
+    <a href="create-post.html">
+      <button class="create-post" aria-label="Create new post">
+        <img class="plus-2" src="../assets/image/create post.png" alt="Create">
+      </button>
+    </a>
+  </nav>
+
 </body>
 </html>

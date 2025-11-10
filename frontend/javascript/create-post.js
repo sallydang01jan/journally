@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("create-post-form");
   const contentInput = document.getElementById("post-input");
   const postContainer = document.getElementById("post-container");
+
   const messageBox = createMessageBox();
   const previewBox = createPreviewBox();
   const fileInput = createHiddenFileInput(form);
@@ -49,7 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       showAlert("⏳ Đang đăng bài...", "info");
       const post = await createPost(content, selectedFiles);
+
       showAlert("🎉 Đăng bài thành công!", "success");
+
+      // 🔔 Thông báo bài mới cho tab khác
+      localStorage.setItem("newPostEvent", Date.now());
 
       if (post && postContainer) {
         const postCard = createPostCard(post);
@@ -67,11 +72,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // -----------------------------
+  // Functions
+  // -----------------------------
   function handleSelectedFiles(files) {
     const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
     files.forEach((file) => {
-      // check duplicate
       if (selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
         return showAlert(`⚠️ File ${file.name} đã được chọn.`, "warning");
       }
@@ -85,11 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       selectedFiles.push(file);
-      previewBox.appendChild(
-        createPreviewItem(file, () => {
-          selectedFiles = selectedFiles.filter((f) => f !== file);
-        })
-      );
+      previewBox.appendChild(createPreviewItem(file, () => {
+        selectedFiles = selectedFiles.filter(f => f !== file);
+      }));
     });
   }
 
@@ -106,8 +111,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// ==== Helpers ====
-
+// -----------------------------
+// Helpers
+// -----------------------------
 function redirectToAuth() {
   window.location.href = "../html/auth.html";
 }
@@ -188,16 +194,17 @@ function createPreviewItem(file, onRemove) {
   }
 
   wrapper.innerHTML = `${mediaHTML}<button class="remove-file-btn">❌</button>`;
-  wrapper
-    .querySelector(".remove-file-btn")
-    .addEventListener("click", () => {
-      onRemove();
-      wrapper.remove();
-    });
+  wrapper.querySelector(".remove-file-btn").addEventListener("click", () => {
+    onRemove();
+    wrapper.remove();
+  });
 
   return wrapper;
 }
 
+// -----------------------------
+// API
+// -----------------------------
 async function createPost(content, files) {
   const token = getToken();
   if (!token) throw new Error("Vui lòng đăng nhập trước khi đăng bài.");
@@ -221,7 +228,6 @@ async function createPost(content, files) {
     } catch (err) {
       console.error(`❌ Lỗi upload file ${file.name}:`, err);
       showAlert(`❌ Lỗi upload file ${file.name}`, "error");
-      // optional: continue với các file còn lại
     }
   }
 

@@ -11,12 +11,21 @@ import {
 import { createPostCard } from "./createComponents.js";
 import { initComments } from "./comments.js";
 
-document.addEventListener("DOMContentLoaded", loadFeed);
+document.addEventListener("DOMContentLoaded", () => {
+  loadFeed();
 
-async function loadFeed() {
+  // 🔄 Lắng nghe bài viết mới từ tab khác
+  window.addEventListener("storage", (e) => {
+    if (e.key === "newPostEvent") {
+      showAlert("🆕 Có bài viết mới! Đang cập nhật...", "info");
+      loadFeed();
+    }
+  });
+});
+
+export async function loadFeed() {
   const token = getToken();
   const postContainer = document.getElementById("post-container");
-
   if (!postContainer) return;
 
   if (!token) {
@@ -30,12 +39,12 @@ async function loadFeed() {
   }
 
   try {
-    const posts = await apiFetch('/posts/feed');
+    const posts = await apiFetch("/posts/feed");
 
     postContainer.innerHTML = "";
 
     if (!Array.isArray(posts) || posts.length === 0) {
-      postContainer.innerHTML = `<p class="text-muted">Chưa có bài viết nào.</p>`;
+      postContainer.innerHTML = `<p class="text-muted text-center">Chưa có bài viết nào.</p>`;
       return;
     }
 
@@ -58,7 +67,7 @@ async function loadFeed() {
       handleExpiredToken();
     } else {
       handleApiError(err, "Không thể tải bài viết");
-      postContainer.innerHTML = `<p class="text-danger">Không thể tải bài viết. Vui lòng thử lại sau.</p>`;
+      postContainer.innerHTML = `<p class="text-danger text-center">Không thể tải bài viết. Vui lòng thử lại sau.</p>`;
     }
   }
 }

@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const postContainer = document.querySelector('#post-container');
 
   const token = getToken();
+
   if (isAuthenticated() && token) {
     try {
       const user = await getUserData();
@@ -22,38 +23,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (addStoryBtn) addStoryBtn.style.display = 'none';
   }
 
+  // -------------------------
+  // Upload story
+  // -------------------------
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
   fileInput.accept = 'image/*,video/*';
   fileInput.classList.add('d-none');
   document.body.appendChild(fileInput);
-
-  async function loadPosts() {
-    if (!postContainer) return console.error('❌ Không tìm thấy container #post-container');
-
-    if (!token) {
-      postContainer.innerHTML = `<p class="text-warning">Vui lòng đăng nhập để xem bài viết.</p>`;
-      return;
-    }
-
-    try {
-      const posts = await apiFetch('/feed');
-      postContainer.innerHTML = '';
-      if (!Array.isArray(posts) || posts.length === 0) {
-        postContainer.innerHTML = `<p class="text-muted text-center mt-3">Chưa có bài viết nào 🌙</p>`;
-        return;
-      }
-
-      posts.forEach((post) => {
-        if (post.content) post.content = escapeHTML(post.content);
-        const card = createPostCard(post);
-        postContainer.appendChild(card);
-      });
-    } catch (err) {
-      handleApiError(err, 'Không thể tải bài viết');
-      if (postContainer) postContainer.innerHTML = `<p class="text-danger">Lỗi tải bài viết. Vui lòng thử lại sau.</p>`;
-    }
-  }
 
   if (addStoryBtn) {
     addStoryBtn.addEventListener('click', () => fileInput.click());
@@ -84,6 +61,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         showAlert('✅ Story đã được đăng!', 'success');
+
+        // ⚡ Thông báo bài mới để các tab khác có thể reload
+        localStorage.setItem('newPostEvent', Date.now());
       } catch (err) {
         console.error(err);
         showAlert('❌ Upload story thất bại', 'error');
@@ -91,5 +71,46 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // -------------------------
+  // Load posts
+  // -------------------------
+  async function loadPosts() {
+    if (!postContainer) return console.error('❌ Không tìm thấy container #post-container');
+
+    if (!token) {
+      postContainer.innerHTML = `<p class="text-warning">Vui lòng đăng nhập để xem bài viết.</p>`;
+      return;
+    }
+
+    try {
+      const posts = await apiFetch('/feed');
+      postContainer.innerHTML = '';
+      if (!Array.isArray(posts) || posts.length === 0) {
+        postContainer.innerHTML = `<p class="text-muted text-center mt-3">Chưa có bài viết nào 🌙</p>`;
+        return;
+      }
+
+      posts.forEach((post) => {
+        if (post.content) post.content = escapeHTML(post.content);
+        const card = createPostCard(post);
+        postContainer.appendChild(card);
+      });
+    } catch (err) {
+      handleApiError(err, 'Không thể tải bài viết');
+      postContainer.innerHTML = `<p class="text-danger">Lỗi tải bài viết. Vui lòng thử lại sau.</p>`;
+    }
+  }
+
+  // Gọi load posts lần đầu
   loadPosts();
+
+  // -------------------------
+  // 🔄 Realtime: lắng nghe bài mới từ tab khác
+  // -------------------------
+  window.addEventListener("storage", (e) => {
+    if (e.key === "newPostEvent") {
+      showAlert("🆕 Có bài viết mới trên feed!", "info");
+      if (typeof loadPosts === "function") loadPosts();
+    }
+  });
 });
