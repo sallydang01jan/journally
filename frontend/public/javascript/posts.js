@@ -7,9 +7,9 @@ import {
   removeToken,
   parseJwt,
   showAlert,
-} from "./utils.js";
-import { createPostCard } from "./createComponents.js";
-import { initComments } from "./comments.js";
+} from "/utils.js";
+import { createPostCard } from "/createComponents.js";
+import { initComments } from "/comments.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   loadFeed();

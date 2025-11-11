@@ -8,7 +8,7 @@ import {
   parseJwt,
   showAlert,
   handleApiError,
-} from "./utils.js";
+} from "/utils.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const redirectTo = (path) => (window.location.href = path);

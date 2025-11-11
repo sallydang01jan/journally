@@ -1,6 +1,6 @@
 // frontend/javascript/notification.js
-import { getToken, apiFetch, formatDate, requireAuth, showAlert, handleApiError } from "./utils.js";
-import { createNotificationCard } from "./createComponents.js";
+import { getToken, apiFetch, formatDate, requireAuth, showAlert, handleApiError } from "/utils.js";
+import { createNotificationCard } from "/createComponents.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   requireAuth();

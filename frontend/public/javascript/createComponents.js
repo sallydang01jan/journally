@@ -1,6 +1,6 @@
 // frontend/javascript/createComponents.js
-import { loadAllComponents } from './components.js';
-import { API_BASE_URL, apiFetch, getToken, escapeHTML, showAlert } from './utils.js';
+import { loadAllComponents } from '/components.js';
+import { API_BASE_URL, apiFetch, getToken, escapeHTML, showAlert } from '/utils.js';
 
 // Khởi tạo tất cả các component động
 export async function initDynamicComponents(data = {}) {
