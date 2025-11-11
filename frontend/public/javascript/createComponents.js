@@ -39,27 +39,27 @@ export function createPostCard(post = {}) {
   article.dataset.id = post._id || post.id || '';
 
   const user = post.userId || post.user || {};
-  const avatar = user.avatar || '../assets/image/default-avatar.png';
+  const avatar = user.avatar || '/assets/image/default-avatar.png';
   const username = escapeHTML(user.username || user.name || 'Ẩn danh');
 
   article.innerHTML = `
     <div class="posts-header">
-      <a href="../html/profile.html?user=${user._id || user.id || ''}">
+      <a href="/html/profile.html?user=${user._id || user.id || ''}">
         <img class="profile-photo" src="${avatar}" alt="${username}" />
         <h1 class="username">${username}</h1>
       </a>
       <nav class="options" aria-label="Post options">
         <button class="options-btn"><i class="fa fa-ellipsis"></i></button>
         <ul class="dropdown-menu">
-          <li><button class="dropdown-item edit"><img src="../assets/image/Pen tool.png" alt=""/><span>Sửa bài</span></button></li>
-          <li><button class="dropdown-item delete"><img src="../assets/image/Trash.png" alt=""/><span>Xóa bài</span></button></li>
+          <li><button class="dropdown-item edit"><img src="/assets/image/Pen tool.png" alt=""/><span>Sửa bài</span></button></li>
+          <li><button class="dropdown-item delete"><img src="/assets/image/Trash.png" alt=""/><span>Xóa bài</span></button></li>
         </ul>
       </nav>
     </div>
     <section class="posts-content"></section>
     <div class="posts-footer">
-      <button class="like-button"><img class="vector" src="../assets/image/like button.png" alt="Like"/><span class="like-count">${post.likes?.length || 0}</span></button>
-      <a href="#" class="comments-button" data-post-id="${post._id || post.id || ''}"><img class="vector" src="../assets/image/comments button.png" alt="Comment" /></a>
+      <button class="like-button"><img class="vector" src="/assets/image/like button.png" alt="Like"/><span class="like-count">${post.likes?.length || 0}</span></button>
+      <a href="#" class="comments-button" data-post-id="${post._id || post.id || ''}"><img class="vector" src="/assets/image/comments button.png" alt="Comment" /></a>
     </div>
   `;
 
@@ -101,7 +101,7 @@ export function createPostCard(post = {}) {
   article.querySelector('.comments-button').addEventListener('click', e => {
     e.preventDefault();
     const id = e.currentTarget.dataset.postId;
-    if (id) window.location.href = `../html/posts.html?id=${id}`;
+    if (id) window.location.href = `/html/posts.html?id=${id}`;
   });
 
   const optionsBtn = article.querySelector('.options-btn');

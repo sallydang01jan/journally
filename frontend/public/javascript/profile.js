@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 function redirectToAuth() {
   removeToken();
-  window.location.href = "../html/auth.html";
+  window.location.href = "/html/auth.html";
 }
 
 function isTokenExpired(token) {
@@ -88,7 +88,7 @@ function displayUserInfo(user, usernameEl, statsEls, profilePhoto) {
   if (usernameEl) usernameEl.textContent = user.username || "Ẩn danh";
 
   if (profilePhoto) {
-    let avatarUrl = "../assets/image/default-avatar.png";
+    let avatarUrl = "/assets/image/default-avatar.png";
     if (user.avatar) {
       const safeUrl = encodeURI(user.avatar);
       avatarUrl = safeUrl.startsWith("http") ? safeUrl : safeUrl;
@@ -170,11 +170,11 @@ function updateHeaderAvatar(myData) {
 
   if (!myData) return;
 
-  let avatarUrl = "../assets/image/default-avatar.png";
+  let avatarUrl = "/assets/image/default-avatar.png";
   if (myData.avatar) {
     const safeUrl = encodeURI(myData.avatar);
     avatarUrl = safeUrl.startsWith("http") ? safeUrl : safeUrl;
   }
   if (profileAvatar) profileAvatar.src = avatarUrl;
-  if (profileLink) profileLink.href = `../html/profile.html?user=${myData.id}`;
+  if (profileLink) profileLink.href = `/html/profile.html?user=${myData.id}`;
 }

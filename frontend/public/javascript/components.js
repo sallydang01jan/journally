@@ -13,11 +13,11 @@ export async function loadComponent(id, path) {
 
 export async function loadAllComponents() {
   await Promise.all([
-    loadComponent('header-container', '../components/header.html'),
-    loadComponent('footer-container', '../components/footer.html'),
-    loadComponent('post-card', '../components/post-card.html'),
-    loadComponent('comment-card', '../components/comment.html'),
-    loadComponent('notification-card', '../components/notification-card.html')
+    loadComponent('header-container', '/components/header.html'),
+    loadComponent('footer-container', '/components/footer.html'),
+    loadComponent('post-card', '/components/post-card.html'),
+    loadComponent('comment-card', '/components/comment.html'),
+    loadComponent('notification-card', '/components/notification-card.html')
   ]);
   console.log("✅ Tất cả component HTML đã được load!");
 }

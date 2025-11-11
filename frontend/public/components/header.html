@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Journally application header" />
+    <link rel="stylesheet" href="/css/components.css" />
+    <title>Journally Header</title>
+  </head>
+  <body>
+    <header class="main-header">
+      <!-- ================================
+           Header khi chưa đăng nhập
+      ================================= -->
+      <div class="box" id="header-not-logged-in">
+        <div class="header-not-logged-in">
+          <div class="property-header">
+            <img
+              class="logo-ng"
+              src="/assets/image/Logo đúng.png"
+              alt="Journally Logo"
+            />
+          </div>
+
+          <a
+            href="/html/auth.html"
+            class="property-sign-in"
+            role="button"
+            aria-label="Đăng nhập hoặc đăng ký"
+          >
+            <div class="text-wrapper">Đăng nhập / Đăng ký</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- ================================
+           Header khi đã đăng nhập
+      ================================= -->
+      <div
+        class="header-logged-in"
+        id="header-logged-in"
+        role="banner"
+        hidden
+      >
+        <a href="/html/home.html" class="logo" aria-label="Journally Home">
+          <img
+            src="/assets/image/Logo đúng.png"
+            alt="Journally Logo"
+            class="header-logo"
+          />
+        </a>
+
+        <div class="user-menu">
+          <button
+            class="user-toggle"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="account-options"
+            aria-label="Mở menu người dùng"
+          >
+            <img
+              class="user-avatar"
+              src="/assets/image/default-avatar.png"
+              alt="Ảnh đại diện người dùng"
+            />
+            <span class="user-name" aria-live="polite">User</span>
+          </button>
+
+          <nav
+            id="account-options"
+            class="account-options"
+            role="navigation"
+            aria-label="Tùy chọn tài khoản"
+            hidden
+          >
+            <button
+              class="logout-button"
+              type="button"
+              aria-label="Đăng xuất khỏi tài khoản"
+            >
+              Đăng xuất
+            </button>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <!-- Firebase + Script -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="/javascript/header.js"></script>
+  </body>
+</html>

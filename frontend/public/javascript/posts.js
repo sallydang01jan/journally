@@ -88,6 +88,6 @@ function handleExpiredToken() {
   removeToken();
   showAlert("🔒 Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.", "warning");
   setTimeout(() => {
-    window.location.href = "../html/auth.html";
+    window.location.href = "/html/auth.html";
   }, 1500);
 }

@@ -1,5 +1,5 @@
 // frontend/javascript/auth.js
-import { auth, provider, signInWithPopup, signOut } from "../libs/firebase.js";
+import { auth, provider, signInWithPopup, signOut } from "/libs/firebase.js";
 import {
   API_BASE_URL,
   getValidToken,
@@ -39,19 +39,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         // expired — clear and redirect to auth
         removeToken();
         await clearCaches();
-        if (!currentPath.endsWith("auth.html")) redirectTo("../html/auth.html");
+        if (!currentPath.endsWith("auth.html")) redirectTo("/html/auth.html");
       } else if (currentPath.endsWith("auth.html")) {
         // already logged in, don't stay on auth page
-        redirectTo("../html/index.html");
+        redirectTo("/html/index.html");
       }
     } catch (err) {
       removeToken();
       await clearCaches();
-      if (!currentPath.endsWith("auth.html")) redirectTo("../html/auth.html");
+      if (!currentPath.endsWith("auth.html")) redirectTo("/html/auth.html");
     }
   } else {
     // no token → only allow auth page
-    if (!currentPath.endsWith("auth.html")) redirectTo("../html/auth.html");
+    if (!currentPath.endsWith("auth.html")) redirectTo("/html/auth.html");
   }
 
   // FORM
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         showAlert("Đăng nhập thành công!", "success");
 
         // small UX delay so toast/alert shows
-        setTimeout(() => redirectTo("../html/index.html"), 700);
+        setTimeout(() => redirectTo("/html/index.html"), 700);
       }
     } catch (err) {
       handleApiError(err);
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       removeToken();
       await clearCaches();
-      redirectTo("../html/auth.html");
+      redirectTo("/html/auth.html");
     });
   }
 
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         setToken(data.token, data.refreshToken);
         showAlert("Đăng nhập Google thành công!", "success");
-        setTimeout(() => redirectTo("../html/index.html"), 700);
+        setTimeout(() => redirectTo("/html/index.html"), 700);
       } catch (err) {
         handleApiError(err);
       } finally {

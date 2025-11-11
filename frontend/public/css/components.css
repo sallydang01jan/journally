@@ -1,7 +1,7 @@
 /* Font */
 @font-face {
   font-family: 'BHN Editorial New Ultra light'; /* Name your font family */
-  src: url('../assets/fonts/BHN\ Editorial\ New\ Ultra\ Light.ttf'); /* Locate the .ttf file within your directory*/
+  src: url('/assets/fonts/BHN\ Editorial\ New\ Ultra\ Light.ttf'); /* Locate the .ttf file within your directory*/
 }
 
 /* ================================
@@ -62,7 +62,12 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.hidden-header {
+  transform: translateY(-100%);
+  opacity: 0;
 }
 
 .header-logo {
@@ -108,6 +113,10 @@
    Dropdown tài khoản
 ================================ */
 .account-options {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition: all 0.2s ease;
   position: absolute;
   top: 110%;
   right: 0;
@@ -118,6 +127,12 @@
   width: 200px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: right;
+}
+
+.account-options.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .logout-button {
