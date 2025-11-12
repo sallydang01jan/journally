@@ -4,15 +4,9 @@
   "public": true,
   "trailingSlash": false,
   "cleanUrls": true,
-  "builds": [
-    {
-      "source": "public/**/*",
-      "use": "@vercel/static"
-    }
-  ],
   "headers": [
     {
-      "source": "/html/(.*)",
+      "source": "/html/:path*",
       "headers": [
         {
           "key": "Cache-Control",
@@ -22,18 +16,18 @@
     }
   ],
   "rewrites": [
-    { "source": "^/$", "destinationination": "/html/index.html" },
-    { "source": "^/about-us$", "destinationination": "/html/about-us.html" },
-    { "source": "^/auth$", "destination": "/html/auth.html" },
-    { "source": "^/create-post$", "destination": "/html/create-post.html" },
-    { "source": "^/notification-center$", "destination": "/html/notification-center.html" },
-    { "source": "^/posts$", "destination": "/html/posts.html" },
-    { "source": "^/profile$", "destination": "/html/profile.html" },
-    { "source": "^/html/(.*)", "destination": "/html/$1" },
-    { "source": "^/javascript/(.*)", "destination": "/javascript/$1" },
-    { "source": "^/css/(.*)", "destination": "/css/$1" },
-    { "source": "^/assets/(.*)", "destination": "/assets/$1" },
-    { "source": "^/libs/(.*)", "destination": "/libs/$1" },
-    { "source": "^/components/(.*)", "destination": "/components/$1" }
+    { "source": "/", "destination": "/html/index.html" },
+    { "source": "/about-us", "destination": "/html/about-us.html" },
+    { "source": "/auth", "destination": "/html/auth.html" },
+    { "source": "/create-post", "destination": "/html/create-post.html" },
+    { "source": "/notification-center", "destination": "/html/notification-center.html" },
+    { "source": "/posts", "destination": "/html/posts.html" },
+    { "source": "/profile", "destination": "/html/profile.html" },
+    { "source": "/html/:path*", "destination": "/html/:path*" },
+    { "source": "/javascript/:path*", "destination": "/javascript/:path*" },
+    { "source": "/css/:path*", "destination": "/css/:path*" },
+    { "source": "/assets/:path*", "destination": "/assets/:path*" },
+    { "source": "/libs/:path*", "destination": "/libs/:path*" },
+    { "source": "/components/:path*", "destination": "/components/:path*" }
   ]
 }
