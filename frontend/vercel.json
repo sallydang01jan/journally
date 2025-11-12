@@ -29,7 +29,6 @@
     { "src": "^/notification-center$", "dest": "/html/notification-center.html" },
     { "src": "^/posts$", "dest": "/html/posts.html" },
     { "src": "^/profile$", "dest": "/html/profile.html" },
-
     { "src": "^/html/(.*)", "dest": "/html/$1" },
     { "src": "^/javascript/(.*)", "dest": "/javascript/$1" },
     { "src": "^/css/(.*)", "dest": "/css/$1" },
