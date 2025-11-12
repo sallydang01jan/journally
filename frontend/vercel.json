@@ -2,53 +2,15 @@
   "version": 2,
   "public": true,
   "name": "frontend",
-  "builds": [
-    {
-      "src": "frontend/html/index.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/",
-      "dest": "frontend/html/index.html"
-    },
-    {
-      "src": "/about-us",
-      "dest": "frontend/html/about-us.html"
-    },
-    {
-      "src": "/auth",
-      "dest": "frontend/html/auth.html"
-    },
-    {
-      "src": "/create-post",
-      "dest": "frontend/html/create-post.html"
-    },
-    {
-      "src": "/notification-center",
-      "dest": "frontend/html/notification-center.html"
-    },
-    {
-      "src": "/posts",
-      "dest": "frontend/html/posts.html"
-    },
-    {
-      "src": "/profile",
-      "dest": "frontend/html/profile.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "frontend/html/$1"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/.*",
-      "status": 404,
-      "dest": "frontend/html/index.html"
-    }
+  "rewrites": [
+    { "source": "/", "destination": "frontend/html/index.html" },
+    { "source": "/about-us", "destination": "frontend/html/about-us.html" },
+    { "source": "/auth", "destination": "frontend/html/auth.html" },
+    { "source": "/create-post", "destination": "frontend/html/create-post.html" },
+    { "source": "/notification-center", "destination": "frontend/html/notification-center.html" },
+    { "source": "/posts", "destination": "frontend/html/posts.html" },
+    { "source": "/profile", "destination": "frontend/html/profile.html" },
+    { "source": "/(.*)", "destination": "frontend/html/index.html" }
   ],
   "headers": [
     {
