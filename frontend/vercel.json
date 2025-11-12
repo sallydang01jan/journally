@@ -10,7 +10,10 @@
     { "source": "/notification-center", "destination": "frontend/html/notification-center.html" },
     { "source": "/posts", "destination": "frontend/html/posts.html" },
     { "source": "/profile", "destination": "frontend/html/profile.html" },
-    { "source": "/(.*)", "destination": "frontend/html/index.html" }
+    { "source": "/(.*)", "destination": "frontend/html/$1" }
+  ],
+  "redirects": [
+    { "source": "/.*", "destination": "frontend/html/index.html", "statusCode": 404 }
   ],
   "headers": [
     {
