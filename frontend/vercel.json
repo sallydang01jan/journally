@@ -1,0 +1,59 @@
+{
+  "version": 3,
+  "name": "frontend",
+  "builds": [
+    {
+      "src": "public/**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/public/html/index.html"
+    },
+    {
+      "src": "/about-us",
+      "dest": "/public/html/about-us.html"
+    },
+    {
+      "src": "/auth",
+      "dest": "/public/html/auth.html"
+    },
+    {
+      "src": "/create-post",
+      "dest": "/public/html/create-post.html"
+    },
+    {
+      "src": "/notification-center",
+      "dest": "/public/html/notification-center.html"
+    },
+    {
+      "src": "/posts",
+      "dest": "/public/html/posts.html"
+    },
+    {
+      "src": "/profile",
+      "dest": "/public/html/profile.html"
+    },
+    {
+      "src": "/components/(.*)",
+      "dest": "/public/components/$1"
+    },
+    {
+      "src": "/javascript/(.*)",
+      "dest": "/public/javascript/$1"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "/public/css/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/public/assets/$1"
+    },
+    {
+      "handle": "filesystem"
+    }
+  ]
+}
