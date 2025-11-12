@@ -1,4 +1,3 @@
-// frontend/javascript/create-post.js
 import {
   getToken,
   escapeHTML,
@@ -19,7 +18,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const form = document.getElementById("create-post-form");
   const contentInput = document.getElementById("post-input");
-  const postContainer = document.getElementById("post-container");
+
+  // Tạo container hiển thị bài viết nếu chưa có
+  let postContainer = document.getElementById("post-container");
+  if (!postContainer) {
+    postContainer = document.createElement("div");
+    postContainer.id = "post-container";
+    form.parentNode.insertBefore(postContainer, form.nextSibling);
+  }
 
   const messageBox = createMessageBox();
   const previewBox = createPreviewBox();
@@ -53,10 +59,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       showAlert("🎉 Đăng bài thành công!", "success");
 
-      // 🔔 Thông báo bài mới cho tab khác
+      // Thông báo bài mới cho tab khác
       localStorage.setItem("newPostEvent", Date.now());
 
-      if (post && postContainer) {
+      if (post) {
         const postCard = createPostCard(post);
         postContainer.prepend(postCard);
       }
