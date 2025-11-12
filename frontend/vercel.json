@@ -9,36 +9,8 @@
   ],
   "routes": [
     {
-      "src": "/",
-      "dest": "/html/index.html"
-    },
-    {
-      "src": "/about-us",
-      "dest": "/html/about-us.html"
-    },
-    {
-      "src": "/auth",
-      "dest": "/html/auth.html"
-    },
-    {
-      "src": "/create-post",
-      "dest": "/html/create-post.html"
-    },
-    {
-      "src": "/notification-center",
-      "dest": "/html/notification-center.html"
-    },
-    {
-      "src": "/posts",
-      "dest": "/html/posts.html"
-    },
-    {
-      "src": "/profile",
-      "dest": "/html/profile.html"
-    },
-    {
-      "src": "/components/(.*)",
-      "dest": "/components/$1"
+      "src": "/(.*\\.html)",
+      "dest": "/html/$1"
     },
     {
       "src": "/javascript/(.*)",
@@ -53,7 +25,12 @@
       "dest": "/assets/$1"
     },
     {
-      "handle": "filesystem"
+      "src": "/components/(.*)",
+      "dest": "/components/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/html/index.html"
     }
   ]
 }
