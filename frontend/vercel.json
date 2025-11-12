@@ -1,15 +1,23 @@
 {
   "version": 2,
   "public": true,
-  "name": "frontend",
   "rewrites": [
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/about-us", "destination": "/about-us.html" },
-    { "source": "/auth", "destination": "/auth.html" },
-    { "source": "/create-post", "destination": "/create-post.html" },
-    { "source": "/notification-center", "destination": "/notification-center.html" },
-    { "source": "/posts", "destination": "/posts.html" },
-    { "source": "/profile", "destination": "/profile.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/", "destination": "/html/index.html" },
+    { "source": "/about-us", "destination": "/html/about-us.html" },
+    { "source": "/auth", "destination": "/html/auth.html" },
+    { "source": "/create-post", "destination": "/html/create-post.html" },
+    { "source": "/notification-center", "destination": "/html/notification-center.html" },
+    { "source": "/posts", "destination": "/html/posts.html" },
+    { "source": "/profile", "destination": "/html/profile.html" },
+    { "source": "/(.*)", "destination": "/html/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    }
   ]
 }
