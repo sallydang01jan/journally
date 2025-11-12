@@ -1,7 +1,7 @@
 {
   "public": true,
   "trailingSlash": false,
-  "cleanUrls": true,
+  "cleanUrls": false,
   "headers": [
     {
       "source": "/(.*).html",
