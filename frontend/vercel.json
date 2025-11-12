@@ -22,11 +22,13 @@
       ]
     }
   ],
-  "redirects": [
-    {
-      "source": "/auth",
-      "destination": "/html/auth.html",
-      "permanent": false
-    }
+  "rewrites": [
+    { "source": "/", "destination": "/html/index.html" },
+    { "source": "/auth", "destination": "/html/auth.html" },
+    { "source": "/about-us", "destination": "/html/about-us.html" },
+    { "source": "/create-post", "destination": "/html/create-post.html" },
+    { "source": "/notification-center", "destination": "/html/notification-center.html" },
+    { "source": "/posts", "destination": "/html/posts.html" },
+    { "source": "/profile", "destination": "/html/profile.html" }
   ]
 }
