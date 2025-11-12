@@ -10,47 +10,47 @@
   "routes": [
     {
       "src": "/",
-      "dest": "/public/html/index.html"
+      "dest": "/html/index.html"
     },
     {
       "src": "/about-us",
-      "dest": "/public/html/about-us.html"
+      "dest": "/html/about-us.html"
     },
     {
       "src": "/auth",
-      "dest": "/public/html/auth.html"
+      "dest": "/html/auth.html"
     },
     {
       "src": "/create-post",
-      "dest": "/public/html/create-post.html"
+      "dest": "/html/create-post.html"
     },
     {
       "src": "/notification-center",
-      "dest": "/public/html/notification-center.html"
+      "dest": "/html/notification-center.html"
     },
     {
       "src": "/posts",
-      "dest": "/public/html/posts.html"
+      "dest": "/html/posts.html"
     },
     {
       "src": "/profile",
-      "dest": "/public/html/profile.html"
+      "dest": "/html/profile.html"
     },
     {
       "src": "/components/(.*)",
-      "dest": "/public/components/$1"
+      "dest": "/components/$1"
     },
     {
       "src": "/javascript/(.*)",
-      "dest": "/public/javascript/$1"
+      "dest": "/javascript/$1"
     },
     {
       "src": "/css/(.*)",
-      "dest": "/public/css/$1"
+      "dest": "/css/$1"
     },
     {
       "src": "/assets/(.*)",
-      "dest": "/public/assets/$1"
+      "dest": "/assets/$1"
     },
     {
       "handle": "filesystem"
