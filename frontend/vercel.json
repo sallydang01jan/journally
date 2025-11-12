@@ -1,28 +1,41 @@
 {
   "version": 2,
   "name": "journally",
+  "public": true,
+  "trailingSlash": false,
+  "cleanUrls": true,
+  "root": "public",
   "builds": [
     {
       "src": "public/**/*",
       "use": "@vercel/static"
     }
   ],
+  "headers": [
+    {
+      "source": "/html/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
+        }
+      ]
+    }
+  ],
   "routes": [
-    { "src": "/", "dest": "/public/html/index.html" },
-    { "src": "/about-us", "dest": "/public/html/about-us.html" },
-    { "src": "/auth", "dest": "/public/html/auth.html" },
-    { "src": "/create-post", "dest": "/public/html/create-post.html" },
-    { "src": "/notification-center", "dest": "/public/html/notification-center.html" },
-    { "src": "/posts", "dest": "/public/html/posts.html" },
-    { "src": "/profile", "dest": "/public/html/profile.html" },
+    { "src": "^/$", "dest": "/html/index.html" },
+    { "src": "^/about-us$", "dest": "/html/about-us.html" },
+    { "src": "^/auth$", "dest": "/html/auth.html" },
+    { "src": "^/create-post$", "dest": "/html/create-post.html" },
+    { "src": "^/notification-center$", "dest": "/html/notification-center.html" },
+    { "src": "^/posts$", "dest": "/html/posts.html" },
+    { "src": "^/profile$", "dest": "/html/profile.html" },
 
-    { "src": "/html/(.*)", "dest": "/public/html/$1" },
-
-    { "src": "/javascript/(.*)", "dest": "/public/javascript/$1" },
-    { "src": "/css/(.*)", "dest": "/public/css/$1" },
-    { "src": "/assets/(.*)", "dest": "/public/assets/$1" },
-    { "src": "/libs/(.*)", "dest": "/public/libs/$1" },
-    { "src": "/components/(.*)", "dest": "/public/components/$1" }
+    { "src": "^/html/(.*)", "dest": "/html/$1" },
+    { "src": "^/javascript/(.*)", "dest": "/javascript/$1" },
+    { "src": "^/css/(.*)", "dest": "/css/$1" },
+    { "src": "^/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "^/libs/(.*)", "dest": "/libs/$1" },
+    { "src": "^/components/(.*)", "dest": "/components/$1" }
   ]
 }
-
