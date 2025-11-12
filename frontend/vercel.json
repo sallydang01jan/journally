@@ -16,6 +16,7 @@
     { "src": "/posts", "dest": "/public/html/posts.html" },
     { "src": "/profile", "dest": "/public/html/profile.html" },
 
+    { "src": "/html/(.*)", "dest": "/public/html/$1" },
 
     { "src": "/javascript/(.*)", "dest": "/public/javascript/$1" },
     { "src": "/css/(.*)", "dest": "/public/css/$1" },
@@ -24,3 +25,4 @@
     { "src": "/components/(.*)", "dest": "/public/components/$1" }
   ]
 }
+
