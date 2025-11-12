@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "name": "journally",
+  "builds": [
+    {
+      "src": "public/**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/", "dest": "/public/html/index.html" },
+    { "src": "/about-us", "dest": "/public/html/about-us.html" },
+    { "src": "/auth", "dest": "/public/html/auth.html" },
+    { "src": "/create-post", "dest": "/public/html/create-post.html" },
+    { "src": "/notification-center", "dest": "/public/html/notification-center.html" },
+    { "src": "/posts", "dest": "/public/html/posts.html" },
+    { "src": "/profile", "dest": "/public/html/profile.html" }
+  ]
+}
