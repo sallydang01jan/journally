@@ -1,8 +1,17 @@
 {
   "public": true,
   "trailingSlash": false,
-  "cleanUrls": false,
+  "cleanUrls": true,
   "headers": [
+    {
+      "source": "../public/html/auth.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
+        }
+      ]
+    },
     {
       "source": "/(.*).html",
       "headers": [
@@ -11,6 +20,13 @@
           "value": "public, max-age=60"
         }
       ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/auth",
+      "destination": "/auth.html",
+      "permanent": false
     }
   ]
 }
