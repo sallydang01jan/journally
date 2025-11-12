@@ -1,82 +1,14 @@
 {
-  "version": 3,
-  "builds": [
-    {
-      "src": "frontend/public/**/*",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/about-us",
-      "dest": "/html/about-us.html"
-    },
-    {
-      "src": "/auth",
-      "dest": "/html/auth.html"
-    },
-    {
-      "src": "/create-post",
-      "dest": "/html/create-post.html"
-    },
-    {
-      "src": "/notification-center",
-      "dest": "/html/notification-center.html"
-    },
-    {
-      "src": "/posts",
-      "dest": "/html/posts.html"
-    },
-    {
-      "src": "/profile",
-      "dest": "/html/profile.html"
-    },
-    {
-      "src": "/",
-      "dest": "/html/index.html"
-    },
-    {
-      "src": "/components/(.*)",
-      "dest": "/components/$1"
-    },
-    {
-      "src": "/javascript/(.*)",
-      "dest": "/javascript/$1"
-    },
-    {
-      "src": "/css/(.*)",
-      "dest": "/css/$1"
-    },
-    {
-      "src": "/libs/(.*)",
-      "dest": "/libs/$1"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/html/index.html"
-    }
-  ],
   "cleanUrls": true,
   "trailingSlash": false,
-  "headers": [
-    {
-      "source": "/(.*)\\.(js|css|png|jpg|svg|ttf|ico)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
-    },
-    {
-      "source": "/(.*)\\.html",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache" }
-      ]
-    }
+  "rewrites": [
+    { "source": "/", "destination": "/html/index.html" },
+    { "source": "/about-us", "destination": "/html/about-us.html" },
+    { "source": "/auth", "destination": "/html/auth.html" },
+    { "source": "/create-post", "destination": "/html/create-post.html" },
+    { "source": "/notification-center", "destination": "/html/notification-center.html" },
+    { "source": "/posts", "destination": "/html/posts.html" },
+    { "source": "/profile", "destination": "/html/profile.html" }
   ]
 }
+
