@@ -12,7 +12,7 @@ dotenv.config();
 // --- CORS setup ---
 app.use(
   cors({
-    origin: "https://journally-delta.vercel.app",
+    origin: "https://journally-sable.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
