@@ -21,6 +21,12 @@
         }
       ]
     }
+  ],
+  "redirects": [
+    {
+      "source": "/auth",
+      "destination": "/auth.html",
+      "permanent": false
+    }
   ]
 }
-
