@@ -4,7 +4,7 @@
   "cleanUrls": true,
   "headers": [
     {
-      "source": "../public/html/auth.html",
+      "source": "/html/auth.html",
       "headers": [
         {
           "key": "Cache-Control",
@@ -25,7 +25,7 @@
   "redirects": [
     {
       "source": "/auth",
-      "destination": "/auth.html",
+      "destination": "/html/auth.html",
       "permanent": false
     }
   ]
