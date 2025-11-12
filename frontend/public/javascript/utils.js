@@ -86,7 +86,7 @@ export function formatDate(dateString) {
 export function requireAuth() {
   if (!isAuthenticated()) {
     showAlert('𓆝 vui lòng đăng nhập trước khi tiếp tục ⋆｡˚ 𓆟', 'error');
-    window.location.href = '/html/auth.html';
+    window.location.href = '../html/auth.html';
   }
 }
 

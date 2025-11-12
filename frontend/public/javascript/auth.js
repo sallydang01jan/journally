@@ -1,5 +1,5 @@
 // frontend/javascript/auth.js
-import { auth, provider, signInWithPopup, signOut } from "/libs/firebase.js";
+import { auth, provider, signInWithPopup, signOut } from "../libs/firebase.js";
 import {
   API_BASE_URL,
   getValidToken,
@@ -8,7 +8,7 @@ import {
   parseJwt,
   showAlert,
   handleApiError,
-} from "/utils.js";
+} from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const redirectTo = (path) => (window.location.href = path);

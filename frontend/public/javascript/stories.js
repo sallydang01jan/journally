@@ -1,5 +1,5 @@
 // frontend/javascript/stories.js
-import { apiFetch, formatDate, getToken, escapeHTML, showAlert, handleApiError } from '/utils.js';
+import { apiFetch, formatDate, getToken, escapeHTML, showAlert, handleApiError } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const addStoryBtn = document.querySelector('.add-story .frame');

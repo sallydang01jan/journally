@@ -8,7 +8,7 @@ import {
   removeToken,
   apiFetch,
 } from "/utils.js";
-import { createPostCard } from "/createComponents.js";
+import { createPostCard } from "./createComponents.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   requireAuth();

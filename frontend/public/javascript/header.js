@@ -1,6 +1,6 @@
 // frontend/javascript/header.js
-import { auth, signOut } from "/libs/firebase.js";
-import { getValidToken, getUserData, removeToken } from "/utils.js";
+import { auth, signOut } from "../libs/firebase.js";
+import { getValidToken, getUserData, removeToken } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const headerLoggedIn = document.getElementById("header-logged-in");

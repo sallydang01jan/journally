@@ -1,6 +1,6 @@
 // frontend/javascript/comments.js
-import { apiFetch, getToken, handleApiError, escapeHTML, showAlert, getUserData, formatDate } from "/utils.js";
-import { createCommentCard } from "/createComponents.js";
+import { apiFetch, getToken, handleApiError, escapeHTML, showAlert, getUserData, formatDate } from "./utils.js";
+import { createCommentCard } from "./createComponents.js";
 
 /**
  * Render một comment vào container

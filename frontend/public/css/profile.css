@@ -1,7 +1,7 @@
 /* Font */
 @font-face {
   font-family: 'BHN Editorial New Ultra light';
-  src: url('/assets/fonts/BHN Editorial New Ultra Light.ttf');
+  src: url('../assets/fonts/BHN Editorial New Ultra Light.ttf');
 }
 
 body {
@@ -92,7 +92,7 @@ body {
 .poeple-s-profile .profile-photo {
   width: clamp(150px, 20vw, 300px);
   height: clamp(150px, 20vw, 300px);
-  background-image: url(/img/ellipse-1.png);
+  background-image: url(../img/ellipse-1.png);
   background-size: cover;
   background-position: center;
   border: 1px solid #000;
