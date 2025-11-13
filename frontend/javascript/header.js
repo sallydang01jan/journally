@@ -11,41 +11,39 @@ document.addEventListener("DOMContentLoaded", async () => {
   const userNameDisplay = document.querySelector(".user-name");
   const userAvatar = document.querySelector(".user-avatar");
 
-  // Ẩn sẵn header để tránh nhấp nháy UI
-  headerLoggedIn.hidden = true;
-  headerNotLoggedIn.hidden = true;
+  // ❌ Ban đầu ẩn header bằng visibility để tránh nhấp nháy
+  headerLoggedIn.style.visibility = "hidden";
+  headerNotLoggedIn.style.visibility = "hidden";
 
-  // ✅ (3) Auth Guard: kiểm tra token hợp lệ
+  // Auth Guard: kiểm tra token hợp lệ
   const token = await getValidToken();
   if (!token) {
     removeToken();
-    headerNotLoggedIn.hidden = false;
+    headerNotLoggedIn.style.visibility = "visible";
     return (window.location.href = "/html/auth.html");
   }
 
-  // ✅ (4) Hiển thị header & tải thông tin user
   try {
     const user = await getUserData(token);
 
-    headerLoggedIn.hidden = false;
-    headerNotLoggedIn.hidden = true;
+    headerLoggedIn.style.visibility = "visible";
+    headerNotLoggedIn.style.visibility = "hidden";
 
     userNameDisplay.textContent =
-      user.username ||
-      user.name ||
-      (user.email ? user.email.split("@")[0] : "User");
+      user.username || user.name || user.email?.split("@")[0] || "User";
 
     userAvatar.src =
       user.avatar && user.avatar.trim() !== ""
         ? user.avatar
         : "/assets/image/default-avatar.png";
+    userAvatar.style.objectFit = "cover";
   } catch (err) {
     console.warn("Không thể lấy thông tin user:", err);
     removeToken();
     return (window.location.href = "/html/auth.html");
   }
 
-  // 🎛 Toggle menu user (hiệu ứng mượt hơn + aria)
+  // Toggle menu người dùng
   if (userToggle && accountOptions) {
     userToggle.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -63,7 +61,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // 🔥 Logout thực sự: Firebase + token local
+  // Logout: Firebase + token local + clear cache
+  async function clearCaches() {
+    if ("caches" in window) {
+      const names = await caches.keys();
+      for (const name of names) await caches.delete(name);
+    }
+  }
+
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
       try {
@@ -72,12 +77,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("Firebase signOut error:", err);
       } finally {
         removeToken();
+        await clearCaches();
         window.location.href = "/html/auth.html";
       }
     });
   }
 
-  // 🚀 Ẩn header khi cuộn xuống
+  // Scroll hide header mượt hơn
   let lastScroll = 0;
   window.addEventListener("scroll", () => {
     const currentScroll = window.scrollY;

@@ -65,9 +65,9 @@
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.hidden-header {
-  transform: translateY(-100%);
-  opacity: 0;
+.main-header {
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  will-change: transform, opacity; /* tối ưu hiệu suất */
 }
 
 .header-logo {

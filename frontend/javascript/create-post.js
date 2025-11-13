@@ -216,7 +216,7 @@ async function createPost(content, files) {
     formData.append("file", file);
 
     try {
-      const res = await apiFetch("/upload/media", {
+      const res = await apiFetch("/posts/media", {
         method: "POST",
         body: formData,
         skipJson: true,

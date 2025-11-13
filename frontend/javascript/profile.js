@@ -1,4 +1,3 @@
-// frontend/javascript/profile.js
 import {
   apiFetch,
   requireAuth,
@@ -16,7 +15,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   requireAuth();
   const token = getToken();
   if (!token) return redirectToAuth();
-
   if (isTokenExpired(token)) return;
 
   const userId = getUserIdFromURL();
@@ -29,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const followBtnWrapper = document.querySelector(".follow-button");
   const followBtn = followBtnWrapper?.querySelector(".text-wrapper-6");
   const profilePhoto = document.querySelector(".profile-photo");
-  const postsSection = document.querySelector(".posts-section");
+  const postContainer = document.getElementById("post-container");
 
   const endpoint = userId ? `/users/${userId}` : "/users/me";
 
@@ -37,25 +35,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     const user = await apiFetch(endpoint);
 
     displayUserInfo(user, usernameEl, statsEls, profilePhoto);
-
     setupFollowButton(user, myData.id, followBtnWrapper, followBtn);
-
-    renderPosts(user.posts || [], postsSection);
+    renderPosts(user.posts || [], postContainer);
   } catch (err) {
     handleApiError(err, "Không thể tải trang hồ sơ");
   }
 
-  // Avatar ở header
   updateHeaderAvatar(myData);
 
-  // 🔄 Lắng nghe bài mới từ tab khác để tự reload hồ sơ
+  // Reload bài mới khi có sự kiện từ tab khác
   window.addEventListener("storage", (e) => {
     if (e.key === "newPostEvent") {
       showAlert("🆕 Bạn vừa đăng bài mới! Đang cập nhật hồ sơ...", "info");
       apiFetch(endpoint)
-        .then((user) => {
-          renderPosts(user.posts || [], postsSection);
-        })
+        .then((user) => renderPosts(user.posts || [], postContainer))
         .catch((err) => console.error("Không thể reload profile:", err));
     }
   });
@@ -89,10 +82,7 @@ function displayUserInfo(user, usernameEl, statsEls, profilePhoto) {
 
   if (profilePhoto) {
     let avatarUrl = "/assets/image/default-avatar.png";
-    if (user.avatar) {
-      const safeUrl = encodeURI(user.avatar);
-      avatarUrl = safeUrl.startsWith("http") ? safeUrl : safeUrl;
-    }
+    if (user.avatar) avatarUrl = encodeURI(user.avatar);
     profilePhoto.style.backgroundImage = `url(${avatarUrl})`;
     profilePhoto.style.backgroundSize = "cover";
     profilePhoto.style.backgroundPosition = "center";
@@ -120,11 +110,8 @@ function setupFollowButton(user, myId, followBtnWrapper, followBtn) {
     followBtnWrapper.onclick = async () => {
       try {
         const data = await apiFetch(`/users/${viewedUserId}/follow`, { method: "POST" });
-        
-        // Cập nhật trạng thái dựa vào isFollowing từ backend
         isFollowing = data.isFollowing;
         if (followBtn) followBtn.textContent = isFollowing ? "Đang theo dõi" : "Theo dõi";
-
         showAlert(data.message, "info");
       } catch (err) {
         handleApiError(err);
@@ -133,22 +120,21 @@ function setupFollowButton(user, myId, followBtnWrapper, followBtn) {
   }
 }
 
-
-function renderPosts(posts, section) {
-  if (!section) return;
+function renderPosts(posts, container) {
+  if (!container) return;
 
   if (!Array.isArray(posts) || posts.length === 0) {
-    section.innerHTML = `
+    container.innerHTML = `
       <div class="rectangle-2">
         <p class="text-wrapper">Chưa có bài viết</p>
       </div>`;
     return;
   }
 
-  const container = document.createElement("div");
-  container.className = "user-posts";
+  const postList = document.createElement("div");
+  postList.className = "user-posts";
 
-  posts.forEach((p) => {
+  posts.forEach(p => {
     const card = createPostCard(p);
     if (!card) return;
 
@@ -157,11 +143,11 @@ function renderPosts(posts, section) {
     const commentTextarea = card.querySelector("textarea");
 
     initComments(p._id, commentsContainer, commentForm, commentTextarea);
-    container.appendChild(card);
+    postList.appendChild(card);
   });
 
-  section.innerHTML = "";
-  section.appendChild(container);
+  container.innerHTML = "";
+  container.appendChild(postList);
 }
 
 function updateHeaderAvatar(myData) {
@@ -171,10 +157,7 @@ function updateHeaderAvatar(myData) {
   if (!myData) return;
 
   let avatarUrl = "/assets/image/default-avatar.png";
-  if (myData.avatar) {
-    const safeUrl = encodeURI(myData.avatar);
-    avatarUrl = safeUrl.startsWith("http") ? safeUrl : safeUrl;
-  }
+  if (myData.avatar) avatarUrl = encodeURI(myData.avatar);
   if (profileAvatar) profileAvatar.src = avatarUrl;
   if (profileLink) profileLink.href = `/html/profile.html?user=${myData.id}`;
 }
