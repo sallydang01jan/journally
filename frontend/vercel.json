@@ -1,7 +1,6 @@
 {
   "version": 2,
   "public": true,
-  "name": "journally",
   "outputDirectory": ".",
   "rewrites": [
     { "source": "/", "destination": "/html/index.html" },
@@ -11,23 +10,11 @@
     { "source": "/notification-center", "destination": "/html/notification-center.html" },
     { "source": "/posts", "destination": "/html/posts.html" },
     { "source": "/profile", "destination": "/html/profile.html" },
-    { "source": "/html/(.*)", "destination": "/html/$1" },
-    { "source": "/javascript/(.*)", "destination": "/javascript/$1" },
-    { "source": "/css/(.*)", "destination": "/css/$1" },
-    { "source": "/assets/(.*)", "destination": "/assets/$1" },
-    { "source": "/libs/(.*)", "destination": "/libs/$1" },
-    { "source": "/components/(.*)", "destination": "/components/$1" },
     { "source": "/(.*)", "destination": "/html/index.html" }
   ],
   "headers": [
     {
-      "source": "/html/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store, must-revalidate" }
-      ]
-    },
-    {
-      "source": "/(css|javascript|assets|libs|components)/(.*)",
+      "source": "/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
         { "key": "Access-Control-Allow-Origin", "value": "*" }
