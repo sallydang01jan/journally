@@ -10,7 +10,7 @@
     { "source": "/notification-center", "destination": "/html/notification-center.html" },
     { "source": "/posts", "destination": "/html/posts.html" },
     { "source": "/profile", "destination": "/html/profile.html" },
-    { "source": "/(.*)", "destination": "/html/index.html" }
+    { "source": "/(.*)", "destination": "/html/$1" }
   ],
   "headers": [
     {
@@ -24,4 +24,3 @@
     }
   ]
 }
-
